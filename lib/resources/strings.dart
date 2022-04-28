@@ -1,0 +1,11 @@
+const BOTTOM_NAV_HOME_LABEL = "Home";
+const BOTTOM_NAV_LIBRARY_LABEL = "Library";
+const SEARCH_PLAY_BOOKS = "Search Play Books";
+const EBOOKS_TAB_LABEL = "Ebooks";
+const AUDIOBOOKS_TAB_LABEL = "Audiobooks";
+const EBOOKS_FOR_YOU = "Ebooks for you";
+const ON_YOUR_WISHLIST = "On your wishlist";
+const AUDIOBOOKS_FOR_YOU = "Audiobooks for you";
+const FICTION_AND_LITERATURE = "Fiction & literature";
+const BUSINESS_AND_INVESTING = "Business & investing";
+const SELF_HELP = "Self-help";
