@@ -145,7 +145,7 @@ class GiveRatingAndGooglePolicySectionView extends StatelessWidget {
         const SizedBox(height: MARGIN_MEDIUM_2),
         Row(
           children: const [
-            Icon(Icons.warning_amber_rounded),
+            Icon(Icons.info_outline_rounded),
             SizedBox(width: MARGIN_MEDIUM_2),
             Text(
               "All prices include GST.",
