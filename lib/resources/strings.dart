@@ -28,3 +28,4 @@ const YOUR_SHELVES_TAB_LABEL = "Your shelves";
 const SORT_BY = "Sort by";
 const VIEW_BY = "View by";
 const CREATE_NEW = "Create new";
+const SHELF_NAME = "Shelf name";
