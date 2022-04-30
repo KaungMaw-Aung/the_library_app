@@ -1,39 +1,23 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
-import 'package:the_library_app/pages/create_new_shelf_page.dart';
-import 'package:the_library_app/pages/shelf_details_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
-import 'package:the_library_app/view_items/book_shelf_view.dart';
 import 'package:the_library_app/widgets/book_filter_chips_view.dart';
 import 'package:the_library_app/widgets/book_grid_and_list_with_sort_and_view_filters_section_view.dart';
-import 'package:the_library_app/widgets/search_play_books_app_bar_view.dart';
 
-class LibraryPage extends StatefulWidget {
+class ShelfDetailsPage extends StatefulWidget {
   @override
-  State<LibraryPage> createState() => _LibraryPageState();
+  State<ShelfDetailsPage> createState() => _ShelfDetailsPageState();
 }
 
-class _LibraryPageState extends State<LibraryPage> {
-  final List<String> tabLabels = [YOUR_BOOKS_TAB_LABEL, YOUR_SHELVES_TAB_LABEL];
+class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
+  List<BookFilterChipVO> chipsData = [
+    BookFilterChipVO("Not started", false),
+    BookFilterChipVO("In progress", false),
+  ];
   final List<String> sortByFilters = ["Author", "Recent", "Title"];
   final List<String> viewByFilters = ["Grid 3x", "Grid 2x", "List"];
-
-  /// State Variables
-  int selectedTabIndex = 0;
-  List<BookFilterChipVO> chipsData = [
-    BookFilterChipVO("Ebooks", false),
-    BookFilterChipVO("Purchases", false),
-    BookFilterChipVO("Samples", false),
-    BookFilterChipVO("Downloaded", false),
-  ];
-  int? groupValue = 1;
-  int? viewFilterGroupValue = 0;
-  String selectedSortFilter = "Recent";
-  String selectedViewFilter = "Grid 3x";
 
   /// Dummy Data
   List<BookVO> dummyBooks = [
@@ -93,151 +77,95 @@ class _LibraryPageState extends State<LibraryPage> {
     ),
   ];
 
+  /// State Variables
+  int? groupValue = 1;
+  int? viewFilterGroupValue = 0;
+  String selectedSortFilter = "Recent";
+  String selectedViewFilter = "Grid 3x";
+
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          child: SearchPlayBooksAppBarView(),
-          preferredSize: const Size.fromHeight(SEARCH_APP_BAR_HEIGHT),
+    return Scaffold(
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        leading: const Icon(
+          Icons.chevron_left,
+          color: Colors.black,
+          size: MARGIN_XLARGE,
         ),
-        body: Stack(
+        actions: const [
+          Icon(
+            Icons.more_horiz,
+            color: Colors.black,
+          ),
+          SizedBox(width: MARGIN_MEDIUM_2),
+        ],
+      ),
+      body: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Positioned.fill(
-              child: SingleChildScrollView(
-                child: Column(
-                  children: [
-                    DefaultTabController(
-                      length: tabLabels.length,
-                      child: TabBar(
-                        isScrollable: false,
-                        indicatorWeight: MARGIN_SMALL,
-                        labelColor: Colors.blue,
-                        unselectedLabelColor: Colors.grey,
-                        labelPadding: const EdgeInsets.symmetric(
-                          vertical: MARGIN_CARD_MEDIUM_2,
-                        ),
-                        indicatorSize: TabBarIndicatorSize.label,
-                        onTap: (index) {
-                          setState(() {
-                            selectedTabIndex = index;
-                          });
-                        },
-                        tabs: tabLabels.map((label) {
-                          return Text(label);
-                        }).toList(),
-                      ),
-                    ),
-                    const Divider(
-                      height: 0,
-                      color: Colors.black12,
-                      thickness: 1.5,
-                    ),
-                    Visibility(
-                      visible: selectedTabIndex == 0,
-                      child: Column(
-                        children: [
-                          BookFilterChipsView(
-                            chipsData: chipsData,
-                            onTapChip: (label, isSelected) {
-                              setState(() {
-                                chipsData = chipsData.map((originalChipData) {
-                                  if (originalChipData.label == label) {
-                                    originalChipData.isSelected = isSelected;
-                                  }
-                                  return originalChipData;
-                                }).toList();
-                              });
-                            },
-                            onTapClearButton: () {
-                              setState(
-                                () {
-                                  chipsData = chipsData.map((chipData) {
-                                    chipData.isSelected = false;
-                                    return chipData;
-                                  }).toList();
-                                },
-                              );
-                            },
-                          ),
-                          BookGridAndListWithSortAndViewFiltersSectionView(
-                            selectedSortFilter: selectedSortFilter,
-                            selectedViewFilter: selectedViewFilter,
-                            viewByFilters: viewByFilters,
-                            sortByFilters: sortByFilters,
-                            books: dummyBooks,
-                            onSortByFilterTap: () {
-                              _showSortByFilterBottomSheet(context);
-                            },
-                            onViewByFilterTap: () {
-                              _showViewByFilterBottomSheet(context);
-                            },
-                          ),
-                        ],
-                      ),
-                    ),
-                    Visibility(
-                      visible: selectedTabIndex == 1,
-                      child: ListView(
-                        padding: const EdgeInsets.only(top: MARGIN_LARGE),
-                        physics: const NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        children: [
-                          BookShelfView(
-                            onShelfTap: () =>
-                                _navigateToShelfDetailsPage(context),
-                          ),
-                        ],
-                      ),
-                    )
-                  ],
+            const SizedBox(height: MARGIN_XLARGE),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+              child: const Text(
+                "10 Interaction Design Books to Read",
+                style: TextStyle(
+                  fontSize: TEXT_HEADING_2X,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Visibility(
-                visible: selectedTabIndex == 1,
-                child: Container(
-                  height: CREATE_NEW_SHELF_BUTTON_HEIGHT,
-                  margin: const EdgeInsets.only(bottom: MARGIN_MEDIUM_2),
-                  child: ElevatedButton.icon(
-                    onPressed: () {
-                      _navigateToCreateNewShelfPage(context);
-                    },
-                    icon: const Icon(Icons.edit_outlined),
-                    label: const Text(CREATE_NEW),
-                    style: TextButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(
-                          MARGIN_XXLARGE,
-                        ),
-                      ),
-                    ),
-                  ),
+            const SizedBox(height: MARGIN_MEDIUM),
+            Container(
+              margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+              child: const Text(
+                "3 books",
+                style: TextStyle(
+                  color: Colors.black54,
                 ),
               ),
-            )
+            ),
+            const Divider(
+              color: Colors.black54,
+              height: MARGIN_XLARGE,
+            ),
+            BookFilterChipsView(
+              chipsData: chipsData,
+              onTapChip: (label, isSelected) {
+                setState(() {
+                  chipsData = chipsData.map((originalChipData) {
+                    if (originalChipData.label == label) {
+                      originalChipData.isSelected = isSelected;
+                    }
+                    return originalChipData;
+                  }).toList();
+                });
+              },
+              onTapClearButton: () {
+                setState(
+                  () {
+                    chipsData = chipsData.map((chipData) {
+                      chipData.isSelected = false;
+                      return chipData;
+                    }).toList();
+                  },
+                );
+              },
+            ),
+            BookGridAndListWithSortAndViewFiltersSectionView(
+              selectedSortFilter: selectedSortFilter,
+              selectedViewFilter: selectedViewFilter,
+              viewByFilters: viewByFilters,
+              sortByFilters: sortByFilters,
+              books: dummyBooks,
+              onSortByFilterTap: () => _showSortByFilterBottomSheet(context),
+              onViewByFilterTap: () => _showViewByFilterBottomSheet(context),
+            ),
           ],
         ),
-      ),
-    );
-  }
-
-  void _navigateToCreateNewShelfPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreateNewShelfPage(),
-      ),
-    );
-  }
-
-  void _navigateToShelfDetailsPage(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (BuildContext context) => ShelfDetailsPage(),
       ),
     );
   }
