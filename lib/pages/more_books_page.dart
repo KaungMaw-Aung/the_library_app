@@ -268,7 +268,7 @@ class MoreBooksPage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BookDetailsPage(),
+        builder: (context) => BookDetailsPage(title: ''),
       ),
     );
   }

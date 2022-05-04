@@ -369,7 +369,7 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BookDetailsPage(),
+        builder: (context) => BookDetailsPage(title: '',),
       ),
     );
   }

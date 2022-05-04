@@ -2,6 +2,8 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/home_bloc.dart';
 import 'package:the_library_app/data/models/library_model.dart';
 import 'package:the_library_app/data/models/library_model_impl.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
@@ -16,95 +18,94 @@ import 'package:the_library_app/widgets/search_play_books_app_bar_view.dart';
 
 import 'book_details_page.dart';
 
-class HomePage extends StatefulWidget {
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
+class HomePage extends StatelessWidget {
   var tabLabels = [EBOOKS_TAB_LABEL, AUDIOBOOKS_TAB_LABEL];
-
-  var selectedTabIndex = 0;
-
-  /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
-
-  /// State Variables
-  List<BookOverviewListVO>? bookOverviewLists;
-
-  @override
-  void initState() {
-    _libraryModel.getBookOverviewLists().then((bookOverviewLists) {
-      setState(() {
-        this.bookOverviewLists = bookOverviewLists;
-      });
-    }).catchError(
-      (error) => debugPrint(error.toString()),
-    );
-
-    super.initState();
-  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: PreferredSize(
-          child: Hero(
-            tag: 'search',
-            child: SearchPlayBooksAppBarView(
-              onSearchBoxTap: () => _navigateToSearchPage(context),
+    return ChangeNotifierProvider(
+      create: (context) => HomeBloc(),
+      child: SafeArea(
+        child: Scaffold(
+          appBar: PreferredSize(
+            child: Hero(
+              tag: 'search',
+              child: SearchPlayBooksAppBarView(
+                onSearchBoxTap: () => _navigateToSearchPage(context),
+              ),
             ),
+            preferredSize: const Size.fromHeight(SEARCH_APP_BAR_HEIGHT),
           ),
-          preferredSize: const Size.fromHeight(SEARCH_APP_BAR_HEIGHT),
-        ),
-        body: SingleChildScrollView(
-          child: Column(
-            children: [
-              const SizedBox(height: MARGIN_MEDIUM),
-              HorizontalBookCarouselView(
-                onTapCarouselItem: () => _navigateToBookDetails(context),
-                onOverflowTap: () => _showMoreOptionsOnBook(context),
-              ),
-              const SizedBox(height: MARGIN_MEDIUM_2),
-              DefaultTabController(
-                length: tabLabels.length,
-                child: TabBar(
-                  isScrollable: false,
-                  indicatorWeight: MARGIN_SMALL,
-                  labelColor: Colors.blue,
-                  unselectedLabelColor: Colors.grey,
-                  labelPadding: const EdgeInsets.symmetric(
-                    vertical: MARGIN_CARD_MEDIUM_2,
-                  ),
-                  indicatorSize: TabBarIndicatorSize.label,
-                  onTap: (index) {
-                    setState(() {
-                      selectedTabIndex = index;
-                    });
+          body: SingleChildScrollView(
+            child: Column(
+              children: [
+                const SizedBox(height: MARGIN_MEDIUM),
+                HorizontalBookCarouselView(
+                  onTapCarouselItem: () => _navigateToBookDetails(context, ''),
+                  onOverflowTap: () => _showMoreOptionsOnBook(context),
+                ),
+                const SizedBox(height: MARGIN_MEDIUM_2),
+                Builder(
+                  builder: (context) {
+                    return DefaultTabController(
+                      length: tabLabels.length,
+                      child: TabBar(
+                        isScrollable: false,
+                        indicatorWeight: MARGIN_SMALL,
+                        labelColor: Colors.blue,
+                        unselectedLabelColor: Colors.grey,
+                        labelPadding: const EdgeInsets.symmetric(
+                          vertical: MARGIN_CARD_MEDIUM_2,
+                        ),
+                        indicatorSize: TabBarIndicatorSize.label,
+                        onTap: (index) {
+                          HomeBloc bloc = Provider.of(context, listen: false);
+                          bloc.onTapTab(index);
+                        },
+                        tabs: tabLabels.map((label) {
+                          return Text(label);
+                        }).toList(),
+                      ),
+                    );
                   },
-                  tabs: tabLabels.map((label) {
-                    return Text(label);
-                  }).toList(),
                 ),
-              ),
-              Visibility(
-                visible: selectedTabIndex == 0,
-                child: EbooksSectionView(
-                  onTitleTap: () => _goToMoreBooksPage(context),
-                  onTapBook: () => _navigateToBookDetails(context),
-                  onTapOverflow: () => _showMoreOptionsOnBook(context),
-                  bookOverviewLists: bookOverviewLists,
+                Selector<HomeBloc, int>(
+                  selector: (context, bloc) => bloc.selectedTabIndex,
+                  builder: (context, selectedTabIndex, child) {
+                    return Visibility(
+                      visible: selectedTabIndex == 0,
+                      child: Selector<HomeBloc, List<BookOverviewListVO>?>(
+                        selector: (context, bloc) => bloc.bookOverviewLists,
+                        builder: (context, bookOverviewLists, child) {
+                          return EbooksSectionView(
+                            onTitleTap: () => _goToMoreBooksPage(context),
+                            onTapBook: (title) => _navigateToBookDetails(
+                              context,
+                              title,
+                            ),
+                            onTapOverflow: () =>
+                                _showMoreOptionsOnBook(context),
+                            bookOverviewLists: bookOverviewLists,
+                          );
+                        },
+                      ),
+                    );
+                  },
                 ),
-              ),
-              Visibility(
-                visible: selectedTabIndex == 1,
-                child: AudiobooksSectionView(
-                  onTapBook: () => _navigateToBookDetails(context),
-                  onTitleTap: () => _goToMoreBooksPage(context),
+                Selector<HomeBloc, int>(
+                  selector: (context, bloc) => bloc.selectedTabIndex,
+                  builder: (context, selectedTabIndex, child) {
+                    return Visibility(
+                      visible: selectedTabIndex == 1,
+                      child: AudiobooksSectionView(
+                        onTapBook: () => _navigateToBookDetails(context, ''),
+                        onTitleTap: () => _goToMoreBooksPage(context),
+                      ),
+                    );
+                  },
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -236,11 +237,11 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  void _navigateToBookDetails(BuildContext context) {
+  void _navigateToBookDetails(BuildContext context, String title) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BookDetailsPage(),
+        builder: (context) => BookDetailsPage(title: title),
       ),
     );
   }
@@ -298,7 +299,7 @@ class AudiobooksSectionView extends StatelessWidget {
 }
 
 class EbooksSectionView extends StatelessWidget {
-  final Function onTapBook;
+  final Function(String) onTapBook;
   final Function onTapOverflow;
   final Function onTitleTap;
   final List<BookOverviewListVO>? bookOverviewLists;

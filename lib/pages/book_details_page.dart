@@ -2,78 +2,91 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/book_details_bloc.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 import 'package:the_library_app/view_items/related_book_item_view.dart';
 import 'package:the_library_app/widgets/book_list_title_and_more_button_view.dart';
 
 class BookDetailsPage extends StatelessWidget {
-  const BookDetailsPage({Key? key}) : super(key: key);
+  final String title;
+
+  BookDetailsPage({required this.title});
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return ChangeNotifierProvider(
+      create: (context) => BookDetailsBloc(title),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: const Icon(
-          Icons.arrow_back,
-          color: Colors.black,
-        ),
-        actions: const [
-          Icon(
-            Icons.search,
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: const Icon(
+            Icons.arrow_back,
             color: Colors.black,
           ),
-          SizedBox(width: MARGIN_MEDIUM_2),
-          Icon(
-            Icons.bookmark_add_outlined,
-            color: Colors.black,
-          ),
-          SizedBox(width: MARGIN_MEDIUM_2),
-          Icon(
-            Icons.more_vert,
-            color: Colors.black,
-          ),
-          SizedBox(width: MARGIN_MEDIUM),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: MARGIN_LARGE),
-            const BookCoverAndInfoView(),
-            const SizedBox(height: MARGIN_LARGE),
-            const BookReviewsTypeAndPagesView(),
-            const SizedBox(height: MARGIN_MEDIUM_2),
-            const FreeSampleAndBuyButtonsView(),
-            const SizedBox(height: MARGIN_MEDIUM),
-            const Divider(
-              height: MARGIN_MEDIUM_2,
-              thickness: 2.0,
-              color: Colors.black12,
-              indent: MARGIN_MEDIUM_3,
-              endIndent: MARGIN_MEDIUM_3,
+          actions: const [
+            Icon(
+              Icons.search,
+              color: Colors.black,
             ),
-            const SizedBox(height: MARGIN_MEDIUM_2),
-            const BuildASeriesBundleSectionView(),
-            const SizedBox(height: MARGIN_MEDIUM_2),
-            const AboutThisEbookSectionView(),
-            const SizedBox(height: MARGIN_MEDIUM_2),
-            const RatingsAndReviewsSectionView(),
-            RelatedBooksSectionView(
-              title: CONTINUE_THE_SERIES,
+            SizedBox(width: MARGIN_MEDIUM_2),
+            Icon(
+              Icons.bookmark_add_outlined,
+              color: Colors.black,
             ),
-            RelatedBooksSectionView(
-              title: SIMILAR_EBOOKS,
+            SizedBox(width: MARGIN_MEDIUM_2),
+            Icon(
+              Icons.more_vert,
+              color: Colors.black,
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-              child: GiveRatingAndGooglePolicySectionView(),
-            )
+            SizedBox(width: MARGIN_MEDIUM),
           ],
+        ),
+        body: Selector<BookDetailsBloc, BookVO?>(
+          selector: (context, bloc) => bloc.book,
+          builder: (context, book, child) {
+            return SingleChildScrollView(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: MARGIN_LARGE),
+                  BookCoverAndInfoView(book: book),
+                  const SizedBox(height: MARGIN_LARGE),
+                  const BookReviewsTypeAndPagesView(),
+                  const SizedBox(height: MARGIN_MEDIUM_2),
+                  FreeSampleAndBuyButtonsView(price: book?.price),
+                  const SizedBox(height: MARGIN_MEDIUM),
+                  const Divider(
+                    height: MARGIN_MEDIUM_2,
+                    thickness: 2.0,
+                    color: Colors.black12,
+                    indent: MARGIN_MEDIUM_3,
+                    endIndent: MARGIN_MEDIUM_3,
+                  ),
+                  const SizedBox(height: MARGIN_MEDIUM_2),
+                  BuildASeriesBundleSectionView(cover: book?.cover),
+                  const SizedBox(height: MARGIN_MEDIUM_2),
+                  AboutThisEbookSectionView(description: book?.description),
+                  const SizedBox(height: MARGIN_MEDIUM_2),
+                  const RatingsAndReviewsSectionView(),
+                  RelatedBooksSectionView(
+                    title: CONTINUE_THE_SERIES,
+                  ),
+                  RelatedBooksSectionView(
+                    title: SIMILAR_EBOOKS,
+                  ),
+                  const Padding(
+                    padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                    child: GiveRatingAndGooglePolicySectionView(),
+                  )
+                ],
+              ),
+            );
+          },
         ),
       ),
     );
@@ -497,9 +510,9 @@ class RatingCountView extends StatelessWidget {
 }
 
 class AboutThisEbookSectionView extends StatelessWidget {
-  const AboutThisEbookSectionView({
-    Key? key,
-  }) : super(key: key);
+  final String? description;
+
+  AboutThisEbookSectionView({required this.description});
 
   @override
   Widget build(BuildContext context) {
@@ -511,13 +524,13 @@ class AboutThisEbookSectionView extends StatelessWidget {
             bookListTitle: ABOUT_THIS_EBOOK,
           ),
         ),
-        const Padding(
-          padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
           child: Text(
-            "Twilight the spy is perfect at his job. That is, until he is told to create a family for his next mission. Enter little Anya and beautiful Yor. Little does he know he is not the only one with a secret. Anya reads mind and Yor moonlights as an assassin!",
+            description ?? "",
             maxLines: 4,
             overflow: TextOverflow.ellipsis,
-            style: TextStyle(
+            style: const TextStyle(
               color: Colors.black54,
               fontWeight: FontWeight.w400,
               height: 1.4,
@@ -530,9 +543,9 @@ class AboutThisEbookSectionView extends StatelessWidget {
 }
 
 class BuildASeriesBundleSectionView extends StatelessWidget {
-  const BuildASeriesBundleSectionView({
-    Key? key,
-  }) : super(key: key);
+  final String? cover;
+
+  BuildASeriesBundleSectionView({required this.cover});
 
   @override
   Widget build(BuildContext context) {
@@ -552,7 +565,7 @@ class BuildASeriesBundleSectionView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(width: MARGIN_MEDIUM_2),
-            const SeriesBundleBooksCountView(),
+            SeriesBundleBooksCountView(cover: cover),
             const SizedBox(width: MARGIN_MEDIUM_2),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -589,9 +602,9 @@ class BuildASeriesBundleSectionView extends StatelessWidget {
 }
 
 class SeriesBundleBooksCountView extends StatelessWidget {
-  const SeriesBundleBooksCountView({
-    Key? key,
-  }) : super(key: key);
+  final String? cover;
+
+  SeriesBundleBooksCountView({required this.cover});
 
   @override
   Widget build(BuildContext context) {
@@ -609,9 +622,9 @@ class SeriesBundleBooksCountView extends StatelessWidget {
                   height: SERIES_BUNDLE_BOOK_HEIGHT,
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(MARGIN_SMALL),
-                    image: const DecorationImage(
+                    image: DecorationImage(
                       image: NetworkImage(
-                        "http://prodimage.images-bn.com/pimages/9781974718160_p0_v1_s1200x630.jpg",
+                        cover ?? "",
                       ),
                       fit: BoxFit.cover,
                     ),
@@ -661,15 +674,16 @@ class SeriesBundleBooksCountView extends StatelessWidget {
 }
 
 class FreeSampleAndBuyButtonsView extends StatelessWidget {
-  const FreeSampleAndBuyButtonsView({
-    Key? key,
-  }) : super(key: key);
+
+  final String? price;
+
+  FreeSampleAndBuyButtonsView({required this.price});
 
   @override
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Spacer(),
+        const Spacer(),
         SizedBox(
           width: MediaQuery.of(context).size.width * 0.43,
           child: OutlinedButton(
@@ -682,11 +696,11 @@ class FreeSampleAndBuyButtonsView extends StatelessWidget {
           width: MediaQuery.of(context).size.width * 0.43,
           child: ElevatedButton(
             onPressed: () {},
-            child: const Text(BUY_BOOK_PRICE + "9.61"),
+            child: Text("$BUY_BOOK_PRICE${price ?? ""}"),
             style: ElevatedButton.styleFrom(elevation: 0),
           ),
         ),
-        Spacer(),
+        const Spacer(),
       ],
     );
   }
@@ -850,9 +864,10 @@ class BookReviewsTypeAndPagesView extends StatelessWidget {
 }
 
 class BookCoverAndInfoView extends StatelessWidget {
-  const BookCoverAndInfoView({
-    Key? key,
-  }) : super(key: key);
+
+  final BookVO? book;
+
+  BookCoverAndInfoView({required this.book});
 
   @override
   Widget build(BuildContext context) {
@@ -868,9 +883,9 @@ class BookCoverAndInfoView extends StatelessWidget {
             height: BOOK_ITEM_IMAGE_HEIGHT,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(MARGIN_SMALL),
-              image: const DecorationImage(
+              image: DecorationImage(
                 image: NetworkImage(
-                  "http://prodimage.images-bn.com/pimages/9781974718160_p0_v1_s1200x630.jpg",
+                  book?.cover ?? "",
                 ),
                 fit: BoxFit.cover,
               ),
@@ -880,21 +895,21 @@ class BookCoverAndInfoView extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              SizedBox(height: MARGIN_MEDIUM),
+            children: [
+              const SizedBox(height: MARGIN_MEDIUM),
               Text(
-                "Spy x Family",
+                book?.title ?? "",
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(
+                style: const TextStyle(
                     fontSize: TEXT_HEADING_1X, fontWeight: FontWeight.w500),
               ),
-              SizedBox(height: MARGIN_MEDIUM),
-              Text("Vol 2"),
-              SizedBox(height: MARGIN_SMALL),
-              Text("Tatsuya Endo"),
-              SizedBox(height: MARGIN_SMALL),
-              Text("Sold by VIZ Media LLC"),
+              const SizedBox(height: MARGIN_MEDIUM),
+              const Text("Vol 2"),
+              const SizedBox(height: MARGIN_SMALL),
+              Text(book?.author ?? ""),
+              const SizedBox(height: MARGIN_SMALL),
+              Text("Sold by ${book?.publisher ?? ""}"),
             ],
           ),
         )

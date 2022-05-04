@@ -4,7 +4,7 @@ import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/book_item_view.dart';
 
 class HorizontalBookListView extends StatelessWidget {
-  final Function onTapBook;
+  final Function(String) onTapBook;
   final Function onTapOverflow;
   final List<BookVO>? books;
 

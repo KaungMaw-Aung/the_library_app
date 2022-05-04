@@ -8,7 +8,7 @@ import 'horizontal_book_list_view.dart';
 class HorizontalBookSectionView extends StatelessWidget {
   final String bookListTitle;
   final List<BookVO>? books;
-  final Function onTapBook;
+  final Function(String) onTapBook;
   final Function onTapOverflow;
   final Function onTitleTap;
 

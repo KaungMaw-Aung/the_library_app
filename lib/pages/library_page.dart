@@ -349,7 +349,7 @@ class _LibraryPageState extends State<LibraryPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BookDetailsPage(),
+        builder: (context) => BookDetailsPage(title: ''),
       ),
     );
   }

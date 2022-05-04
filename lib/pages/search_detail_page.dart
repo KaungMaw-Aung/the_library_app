@@ -34,14 +34,14 @@ class SearchDetailPage extends StatelessWidget {
               children: [
                 HorizontalBookSectionView(
                   bookListTitle: "Related Category One",
-                  onTapBook: () => _navigateToBookDetails(context),
+                  onTapBook: (title) => _navigateToBookDetails(context),
                   onTapOverflow: () => _showMoreOptionsOnBook(context),
                   onTitleTap: () => _goToMoreBooksPage(context),
                   books: [],
                 ),
                 HorizontalBookSectionView(
                   bookListTitle: "Related Category Two",
-                  onTapBook: () => _navigateToBookDetails(context),
+                  onTapBook: (title) => _navigateToBookDetails(context),
                   onTapOverflow: () => _showMoreOptionsOnBook(context),
                   onTitleTap: () => _goToMoreBooksPage(context),
                   books: [],
@@ -183,7 +183,7 @@ class SearchDetailPage extends StatelessWidget {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => const BookDetailsPage(),
+        builder: (context) => BookDetailsPage(title: ''),
       ),
     );
   }

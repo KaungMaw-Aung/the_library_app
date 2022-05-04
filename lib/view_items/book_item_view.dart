@@ -3,7 +3,7 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class BookItemView extends StatelessWidget {
-  final Function onTapBook;
+  final Function(String) onTapBook;
   final Function onTapOverflow;
   final BookVO? book;
 
@@ -16,7 +16,7 @@ class BookItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onTapBook(),
+      onTap: () => onTapBook(book?.title ?? ""),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
