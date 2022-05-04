@@ -3,6 +3,12 @@ import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 
 class SearchPlayBooksAppBarView extends StatelessWidget {
+
+  final Function onSearchBoxTap;
+
+
+  SearchPlayBooksAppBarView({required this.onSearchBoxTap});
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -13,7 +19,7 @@ class SearchPlayBooksAppBarView extends StatelessWidget {
         ),
       ),
       child: InkWell(
-        onTap: () => print("Search Box Tapped"),
+        onTap: () => onSearchBoxTap(),
         borderRadius: BorderRadius.circular(MARGIN_MEDIUM),
         child: Column(
           children: [

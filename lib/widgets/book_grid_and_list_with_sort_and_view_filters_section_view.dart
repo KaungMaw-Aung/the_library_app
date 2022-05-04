@@ -14,6 +14,9 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
     required this.books,
     required this.onSortByFilterTap,
     required this.onViewByFilterTap,
+    required this.onGridBookTap,
+    required this.onListBookTap,
+    required this.onTapOverflow,
   });
 
   final String selectedSortFilter;
@@ -23,6 +26,9 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
   final List<BookVO> books;
   final Function onSortByFilterTap;
   final Function onViewByFilterTap;
+  final Function onGridBookTap;
+  final Function onListBookTap;
+  final Function onTapOverflow;
 
   @override
   Widget build(BuildContext context) {
@@ -36,33 +42,37 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
         ),
         selectedViewFilter == viewByFilters.last
             ? ListView.builder(
-          itemCount: books.length,
-          padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          itemBuilder: (context, index) {
-            return BookListItemView(
-              book: books[index],
-            );
-          },
-        )
+                itemCount: books.length,
+                padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                itemBuilder: (context, index) {
+                  return BookListItemView(
+                    book: books[index],
+                    onBookTap: onListBookTap,
+                    onTapOverflow: onTapOverflow,
+                  );
+                },
+              )
             : GridView.builder(
-          itemCount: books.length,
-          physics: const NeverScrollableScrollPhysics(),
-          shrinkWrap: true,
-          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount:
-            selectedViewFilter == viewByFilters.first ? 3 : 2,
-            childAspectRatio: 1 / 1.8,
-          ),
-          itemBuilder: (context, index) {
-            return BookGridItemView(
-              book: books[index],
-              gridCount:
-              selectedViewFilter == viewByFilters.first ? 3 : 2,
-            );
-          },
-        ),
+                itemCount: books.length,
+                physics: const NeverScrollableScrollPhysics(),
+                shrinkWrap: true,
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount:
+                      selectedViewFilter == viewByFilters.first ? 3 : 2,
+                  childAspectRatio: 1 / 1.8,
+                ),
+                itemBuilder: (context, index) {
+                  return BookGridItemView(
+                    book: books[index],
+                    gridCount:
+                        selectedViewFilter == viewByFilters.first ? 3 : 2,
+                    onBookTap: onGridBookTap,
+                    onOverflowTap: onTapOverflow,
+                  );
+                },
+              ),
       ],
     );
   }

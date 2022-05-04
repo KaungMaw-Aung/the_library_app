@@ -14,15 +14,19 @@ class CreateNewShelfPage extends StatelessWidget {
             const SizedBox(height: MARGIN_MEDIUM_2),
             Container(
               margin: const EdgeInsets.only(left: MARGIN_MEDIUM_2),
-              child: const Icon(
-                Icons.check,
-                color: Colors.blue,
+              child: GestureDetector(
+                onTap: () => _createNewShelf(context),
+                child: const Icon(
+                  Icons.check,
+                  color: Colors.blue,
+                ),
               ),
             ),
             const SizedBox(height: MARGIN_LARGE),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_3),
               child: TextField(
+                autofocus: true,
                 decoration: InputDecoration(
                   hintText: SHELF_NAME,
                   hintStyle: TextStyle(
@@ -45,4 +49,9 @@ class CreateNewShelfPage extends StatelessWidget {
       ),
     );
   }
+
+  void _createNewShelf(BuildContext context) {
+    Navigator.pop(context);
+  }
+
 }

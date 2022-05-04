@@ -6,6 +6,8 @@ import 'package:the_library_app/resources/strings.dart';
 import 'package:the_library_app/widgets/book_filter_chips_view.dart';
 import 'package:the_library_app/widgets/book_grid_and_list_with_sort_and_view_filters_section_view.dart';
 
+import 'book_details_page.dart';
+
 class ShelfDetailsPage extends StatefulWidget {
   @override
   State<ShelfDetailsPage> createState() => _ShelfDetailsPageState();
@@ -95,12 +97,15 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
           color: Colors.black,
           size: MARGIN_XLARGE,
         ),
-        actions: const [
-          Icon(
-            Icons.more_horiz,
-            color: Colors.black,
+        actions: [
+          GestureDetector(
+            onTap: () => _showOptionsOnBookShelf(context),
+            child: const Icon(
+              Icons.more_horiz,
+              color: Colors.black,
+            ),
           ),
-          SizedBox(width: MARGIN_MEDIUM_2),
+          const SizedBox(width: MARGIN_MEDIUM_2),
         ],
       ),
       body: SingleChildScrollView(
@@ -163,9 +168,181 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
               books: dummyBooks,
               onSortByFilterTap: () => _showSortByFilterBottomSheet(context),
               onViewByFilterTap: () => _showViewByFilterBottomSheet(context),
+              onGridBookTap: () => _navigateToBookDetails(context),
+              onListBookTap: () => _navigateToBookDetails(context),
+              onTapOverflow: () => _showMoreOptionsOnBook(context),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  void _showOptionsOnBookShelf(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Wrap(
+            children: const [
+              ListTile(
+                title: Text(
+                  "10 Interaction Design Books to Read",
+                  style: TextStyle(fontWeight: FontWeight.w600),
+                ),
+              ),
+              Divider(
+                color: Colors.black54,
+                height: 0.0,
+              ),
+              ListTile(
+                leading: Icon(Icons.edit_outlined),
+                title: Text(
+                  RENAME_SHELF,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              ListTile(
+                leading: Icon(Icons.delete),
+                title: Text(
+                  DELETE_SHELF,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  void _showMoreOptionsOnBook(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Wrap(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Card(
+                      elevation: MARGIN_SMALL,
+                      margin: EdgeInsets.zero,
+                      child: Container(
+                        width: BOOK_LIST_ITEM_COVER_WIDTH,
+                        height: BOOK_LIST_ITEM_HEIGHT,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(MARGIN_SMALL),
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                              "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Book Name",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: MARGIN_SMALL),
+                        Text(
+                          "Author Name",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const Divider(
+                color: Colors.black54,
+                height: 0.0,
+              ),
+              const ListTile(
+                leading: Icon(Icons.remove_circle_outline_rounded),
+                title: Text(
+                  REMOVE_DOWNLOAD,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.delete),
+                title: Text(
+                  DELETE_FROM_LIBRARY,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.add),
+                title: Text(
+                  ADD_TO_SHELF,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.book_rounded),
+                title: Text(
+                  ABOUT_THIS_EBOOK,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: MARGIN_SMALL,
+                  left: MARGIN_MEDIUM_2,
+                  right: MARGIN_MEDIUM_2,
+                  bottom: MARGIN_MEDIUM_2,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Buy \$4.99"),
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
+  void _navigateToBookDetails(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BookDetailsPage(),
       ),
     );
   }
@@ -178,7 +355,14 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
           return Wrap(
             children: [
               const ListTile(
-                title: Text(SORT_BY),
+                contentPadding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+                title: Text(
+                  SORT_BY,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: TEXT_CARD_REGULAR_2X,
+                  ),
+                ),
               ),
               const Divider(
                 color: Colors.black54,
@@ -331,7 +515,14 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
           return Wrap(
             children: [
               const ListTile(
-                title: Text(VIEW_BY),
+                contentPadding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+                title: Text(
+                  VIEW_BY,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: TEXT_CARD_REGULAR_2X,
+                  ),
+                ),
               ),
               const Divider(
                 color: Colors.black54,

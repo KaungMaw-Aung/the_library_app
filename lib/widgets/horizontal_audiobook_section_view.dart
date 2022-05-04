@@ -7,10 +7,12 @@ import 'horizontal_audiobook_list_view.dart';
 class HorizontalAudiobookSectionView extends StatelessWidget {
   final String audiobookListTitle;
   final Function onTapAudiobook;
+  final Function onAudiobookSectionTitleTap;
 
   HorizontalAudiobookSectionView({
     required this.audiobookListTitle,
     required this.onTapAudiobook,
+    required this.onAudiobookSectionTitleTap,
   });
 
   @override
@@ -18,7 +20,7 @@ class HorizontalAudiobookSectionView extends StatelessWidget {
     return Column(
       children: [
         InkWell(
-          onTap: () => print("Tapped"),
+          onTap: () => onAudiobookSectionTitleTap(),
           child: BookListTitleAndMoreButtonView(
             bookListTitle: audiobookListTitle,
           ),

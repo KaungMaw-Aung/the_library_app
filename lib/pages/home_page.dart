@@ -1,6 +1,9 @@
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:the_library_app/pages/more_books_page.dart';
+import 'package:the_library_app/pages/search_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 import 'package:the_library_app/view_items/carousel_item_view.dart';
@@ -25,7 +28,12 @@ class _HomePageState extends State<HomePage> {
     return SafeArea(
       child: Scaffold(
         appBar: PreferredSize(
-          child: SearchPlayBooksAppBarView(),
+          child: Hero(
+            tag: 'search',
+            child: SearchPlayBooksAppBarView(
+              onSearchBoxTap: () => _navigateToSearchPage(context),
+            ),
+          ),
           preferredSize: const Size.fromHeight(SEARCH_APP_BAR_HEIGHT),
         ),
         body: SingleChildScrollView(
@@ -34,6 +42,7 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: MARGIN_MEDIUM),
               HorizontalBookCarouselView(
                 onTapCarouselItem: () => _navigateToBookDetails(context),
+                onOverflowTap: () => _showMoreOptionsOnBook(context),
               ),
               const SizedBox(height: MARGIN_MEDIUM_2),
               DefaultTabController(
@@ -59,52 +68,148 @@ class _HomePageState extends State<HomePage> {
               ),
               Visibility(
                 visible: selectedTabIndex == 0,
-                child: Column(
-                  children: [
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalBookSectionView(
-                      bookListTitle: EBOOKS_FOR_YOU,
-                      onTapBook: () => _navigateToBookDetails(context),
-                    ),
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalBookSectionView(
-                      bookListTitle: ON_YOUR_WISHLIST,
-                      onTapBook: () => _navigateToBookDetails(context),
-                    ),
-                  ],
+                child: EbooksSectionView(
+                  onTitleTap: () => _goToMoreBooksPage(context),
+                  onTapBook: () => _navigateToBookDetails(context),
+                  onTapOverflow: () => _showMoreOptionsOnBook(context),
                 ),
               ),
               Visibility(
                 visible: selectedTabIndex == 1,
-                child: Column(
-                  children: [
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalAudiobookSectionView(
-                      audiobookListTitle: AUDIOBOOKS_FOR_YOU,
-                      onTapAudiobook: () => _navigateToBookDetails(context),
-                    ),
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalAudiobookSectionView(
-                      audiobookListTitle: FICTION_AND_LITERATURE,
-                      onTapAudiobook: () => _navigateToBookDetails(context),
-                    ),
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalAudiobookSectionView(
-                      audiobookListTitle: BUSINESS_AND_INVESTING,
-                      onTapAudiobook: () => _navigateToBookDetails(context),
-                    ),
-                    const SizedBox(height: MARGIN_MEDIUM),
-                    HorizontalAudiobookSectionView(
-                      audiobookListTitle: SELF_HELP,
-                      onTapAudiobook: () => _navigateToBookDetails(context),
-                    ),
-                  ],
+                child: AudiobooksSectionView(
+                  onTapBook: () => _navigateToBookDetails(context),
+                  onTitleTap: () => _goToMoreBooksPage(context),
                 ),
               ),
             ],
           ),
         ),
       ),
+    );
+  }
+
+  void _goToMoreBooksPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => MoreBooksPage(),
+      ),
+    );
+  }
+
+  void _showMoreOptionsOnBook(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Wrap(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Card(
+                      elevation: MARGIN_SMALL,
+                      margin: EdgeInsets.zero,
+                      child: Container(
+                        width: BOOK_LIST_ITEM_COVER_WIDTH,
+                        height: BOOK_LIST_ITEM_HEIGHT,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(MARGIN_SMALL),
+                          image: const DecorationImage(
+                            image: NetworkImage(
+                              "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: const [
+                        Text(
+                          "Book Name",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        SizedBox(height: MARGIN_SMALL),
+                        Text(
+                          "Author Name",
+                          style: TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const Divider(
+                color: Colors.black54,
+                height: 0.0,
+              ),
+              const ListTile(
+                leading: Icon(Icons.remove_circle_outline_rounded),
+                title: Text(
+                  REMOVE_DOWNLOAD,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.delete),
+                title: Text(
+                  DELETE_FROM_LIBRARY,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.add),
+                title: Text(
+                  ADD_TO_SHELF,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.book_rounded),
+                title: Text(
+                  ABOUT_THIS_EBOOK,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: MARGIN_SMALL,
+                  left: MARGIN_MEDIUM_2,
+                  right: MARGIN_MEDIUM_2,
+                  bottom: MARGIN_MEDIUM_2,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Buy \$4.99"),
+                ),
+              ),
+            ],
+          );
+        });
+      },
     );
   }
 
@@ -117,12 +222,100 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  void _navigateToSearchPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchPage(),
+      ),
+    );
+  }
+}
+
+class AudiobooksSectionView extends StatelessWidget {
+  final Function onTapBook;
+  final Function onTitleTap;
+
+  AudiobooksSectionView({
+    required this.onTapBook,
+    required this.onTitleTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalAudiobookSectionView(
+          audiobookListTitle: AUDIOBOOKS_FOR_YOU,
+          onTapAudiobook: onTapBook,
+          onAudiobookSectionTitleTap: onTitleTap,
+        ),
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalAudiobookSectionView(
+          audiobookListTitle: FICTION_AND_LITERATURE,
+          onTapAudiobook: onTapBook,
+          onAudiobookSectionTitleTap: onTitleTap,
+        ),
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalAudiobookSectionView(
+          audiobookListTitle: BUSINESS_AND_INVESTING,
+          onTapAudiobook: onTapBook,
+          onAudiobookSectionTitleTap: onTitleTap,
+        ),
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalAudiobookSectionView(
+          audiobookListTitle: SELF_HELP,
+          onTapAudiobook: onTapBook,
+          onAudiobookSectionTitleTap: onTitleTap,
+        ),
+      ],
+    );
+  }
+}
+
+class EbooksSectionView extends StatelessWidget {
+  final Function onTapBook;
+  final Function onTapOverflow;
+  final Function onTitleTap;
+
+  EbooksSectionView({
+    required this.onTapBook,
+    required this.onTapOverflow,
+    required this.onTitleTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalBookSectionView(
+          bookListTitle: EBOOKS_FOR_YOU,
+          onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
+          onTitleTap: onTitleTap,
+        ),
+        const SizedBox(height: MARGIN_MEDIUM),
+        HorizontalBookSectionView(
+          bookListTitle: ON_YOUR_WISHLIST,
+          onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
+          onTitleTap: onTitleTap,
+        ),
+      ],
+    );
+  }
 }
 
 class HorizontalBookCarouselView extends StatelessWidget {
   final Function onTapCarouselItem;
+  final Function onOverflowTap;
 
-  HorizontalBookCarouselView({required this.onTapCarouselItem});
+  HorizontalBookCarouselView({
+    required this.onTapCarouselItem,
+    required this.onOverflowTap,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -142,12 +335,15 @@ class HorizontalBookCarouselView extends StatelessWidget {
         items: [
           CarouselItemView(
             onTapCarouselItem: onTapCarouselItem,
+            onOverflowTap: onOverflowTap,
           ),
           CarouselItemView(
             onTapCarouselItem: onTapCarouselItem,
+            onOverflowTap: onOverflowTap,
           ),
           CarouselItemView(
             onTapCarouselItem: onTapCarouselItem,
+            onOverflowTap: onOverflowTap,
           ),
         ],
       ),

@@ -2,10 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class BookItemView extends StatelessWidget {
-
   final Function onTapBook;
+  final Function onTapOverflow;
 
-  BookItemView({required this.onTapBook});
+  BookItemView({
+    required this.onTapBook,
+    required this.onTapOverflow,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -30,17 +33,20 @@ class BookItemView extends StatelessWidget {
                 ),
               ),
               child: Stack(
-                children: const [
+                children: [
                   Padding(
-                    padding: EdgeInsets.only(right: MARGIN_SMALL),
+                    padding: const EdgeInsets.only(right: MARGIN_SMALL),
                     child: Align(
                       alignment: Alignment.topRight,
                       child: PhysicalModel(
                         color: Colors.transparent,
                         elevation: MARGIN_MEDIUM_2,
-                        child: Icon(
-                          Icons.more_horiz,
-                          color: Colors.white,
+                        child: GestureDetector(
+                          onTap: () => onTapOverflow(),
+                          child: const Icon(
+                            Icons.more_horiz,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),

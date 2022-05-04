@@ -3,8 +3,10 @@ import 'package:the_library_app/resources/dimens.dart';
 
 class CarouselItemView extends StatelessWidget {
   final Function onTapCarouselItem;
+  final Function onOverflowTap;
 
-  CarouselItemView({required this.onTapCarouselItem});
+  CarouselItemView(
+      {required this.onTapCarouselItem, required this.onOverflowTap,});
 
   @override
   Widget build(BuildContext context) {
@@ -32,14 +34,17 @@ class CarouselItemView extends StatelessWidget {
             ),
             child: Stack(
               children: [
-                const Padding(
-                  padding: EdgeInsets.only(right: MARGIN_MEDIUM),
+                Padding(
+                  padding: const EdgeInsets.only(right: MARGIN_MEDIUM),
                   child: Align(
                     alignment: Alignment.topRight,
-                    child: Icon(
-                      Icons.more_horiz,
-                      color: Colors.white,
-                      size: MARGIN_XLARGE,
+                    child: GestureDetector(
+                      onTap: () => onOverflowTap(),
+                      child: const Icon(
+                        Icons.more_horiz,
+                        color: Colors.white,
+                        size: MARGIN_XLARGE,
+                      ),
                     ),
                   ),
                 ),

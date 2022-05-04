@@ -4,8 +4,12 @@ import 'package:the_library_app/view_items/book_item_view.dart';
 
 class HorizontalBookListView extends StatelessWidget {
   final Function onTapBook;
+  final Function onTapOverflow;
 
-  HorizontalBookListView({required this.onTapBook});
+  HorizontalBookListView({
+    required this.onTapBook,
+    required this.onTapOverflow,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -15,15 +19,19 @@ class HorizontalBookListView extends StatelessWidget {
       children: [
         BookItemView(
           onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
         ),
         BookItemView(
           onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
         ),
         BookItemView(
           onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
         ),
         BookItemView(
           onTapBook: onTapBook,
+          onTapOverflow: onTapOverflow,
         ),
       ],
     );
