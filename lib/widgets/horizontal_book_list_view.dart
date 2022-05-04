@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/book_item_view.dart';
 
 class HorizontalBookListView extends StatelessWidget {
   final Function onTapBook;
   final Function onTapOverflow;
+  final List<BookVO>? books;
 
   HorizontalBookListView({
     required this.onTapBook,
     required this.onTapOverflow,
+    required this.books,
   });
 
   @override
@@ -16,24 +19,14 @@ class HorizontalBookListView extends StatelessWidget {
     return ListView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.only(left: MARGIN_MEDIUM_2),
-      children: [
-        BookItemView(
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-        ),
-        BookItemView(
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-        ),
-        BookItemView(
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-        ),
-        BookItemView(
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-        ),
-      ],
+      children: books
+              ?.map(
+                (book) => BookItemView(
+                  onTapBook: onTapBook,
+                  onTapOverflow: onTapOverflow,
+                  book: book,
+                ),
+              ).toList() ?? [],
     );
   }
 }

@@ -35,7 +35,7 @@ class BookGridItemView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(MARGIN_SMALL),
                   image: DecorationImage(
                     image: NetworkImage(
-                      book.cover,
+                      book.cover ?? "",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -113,7 +113,7 @@ class BookGridItemView extends StatelessWidget {
             ),
             const SizedBox(height: MARGIN_MEDIUM),
             Text(
-              book.title,
+              book.title ?? "",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(
@@ -122,7 +122,7 @@ class BookGridItemView extends StatelessWidget {
               ),
             ),
             Text(
-              book.author,
+              book.author ?? "",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
               style: const TextStyle(

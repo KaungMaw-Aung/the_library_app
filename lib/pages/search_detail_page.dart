@@ -32,19 +32,19 @@ class SearchDetailPage extends StatelessWidget {
             ),
             Column(
               children: [
-                const SizedBox(height: MARGIN_MEDIUM),
                 HorizontalBookSectionView(
                   bookListTitle: "Related Category One",
                   onTapBook: () => _navigateToBookDetails(context),
                   onTapOverflow: () => _showMoreOptionsOnBook(context),
                   onTitleTap: () => _goToMoreBooksPage(context),
+                  books: [],
                 ),
-                const SizedBox(height: MARGIN_MEDIUM),
                 HorizontalBookSectionView(
                   bookListTitle: "Related Category Two",
                   onTapBook: () => _navigateToBookDetails(context),
                   onTapOverflow: () => _showMoreOptionsOnBook(context),
                   onTitleTap: () => _goToMoreBooksPage(context),
+                  books: [],
                 ),
               ],
             ),

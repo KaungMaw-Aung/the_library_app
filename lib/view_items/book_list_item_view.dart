@@ -33,7 +33,7 @@ class BookListItemView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(MARGIN_SMALL),
                   image: DecorationImage(
                     image: NetworkImage(
-                      book.cover,
+                      book.cover ?? "",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -47,7 +47,7 @@ class BookListItemView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    book.title,
+                    book.title ?? "",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -56,7 +56,7 @@ class BookListItemView extends StatelessWidget {
                   ),
                   const SizedBox(height: MARGIN_MEDIUM),
                   Text(
-                    book.author,
+                    book.author ?? "",
                     style: const TextStyle(
                       color: Colors.black54,
                     ),

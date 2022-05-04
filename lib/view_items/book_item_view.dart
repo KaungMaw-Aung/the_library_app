@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class BookItemView extends StatelessWidget {
   final Function onTapBook;
   final Function onTapOverflow;
+  final BookVO? book;
 
   BookItemView({
+    required this.book,
     required this.onTapBook,
     required this.onTapOverflow,
   });
@@ -25,9 +28,9 @@ class BookItemView extends StatelessWidget {
               height: BOOK_ITEM_IMAGE_HEIGHT,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(MARGIN_SMALL),
-                image: const DecorationImage(
+                image: DecorationImage(
                   image: NetworkImage(
-                    "https://images-na.ssl-images-amazon.com/images/I/715FyFCzwYL.jpg",
+                    book?.cover ?? "",
                   ),
                   fit: BoxFit.cover,
                 ),
@@ -58,11 +61,11 @@ class BookItemView extends StatelessWidget {
           const SizedBox(height: MARGIN_MEDIUM),
           Container(
             width: BOOK_ITEM_WIDTH,
-            child: const Text(
-              "Change by Design",
+            child: Text(
+              book?.title ?? "",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: TEXT_SMALL_2,
               ),
@@ -70,11 +73,11 @@ class BookItemView extends StatelessWidget {
           ),
           Container(
             width: BOOK_ITEM_WIDTH,
-            child: const Text(
-              "Tim Brown",
+            child: Text(
+              book?.author ?? "",
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.grey,
                 fontSize: TEXT_SMALL_2,
               ),
@@ -86,8 +89,8 @@ class BookItemView extends StatelessWidget {
             child: RichText(
               text: TextSpan(
                 style: DefaultTextStyle.of(context).style,
-                children: const [
-                  TextSpan(
+                children: [
+                  const TextSpan(
                     text: "\$37.44 ",
                     style: TextStyle(
                       fontSize: TEXT_SMALL_2,
@@ -95,8 +98,8 @@ class BookItemView extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " \$26.21",
-                    style: TextStyle(
+                    text: " \$${book?.price ?? ""}",
+                    style: const TextStyle(
                       fontSize: TEXT_SMALL_2,
                     ),
                   ),

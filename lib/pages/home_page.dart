@@ -2,6 +2,9 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:the_library_app/data/models/library_model.dart';
+import 'package:the_library_app/data/models/library_model_impl.dart';
+import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/pages/more_books_page.dart';
 import 'package:the_library_app/pages/search_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
@@ -22,6 +25,25 @@ class _HomePageState extends State<HomePage> {
   var tabLabels = [EBOOKS_TAB_LABEL, AUDIOBOOKS_TAB_LABEL];
 
   var selectedTabIndex = 0;
+
+  /// Model
+  final LibraryModel _libraryModel = LibraryModelImpl();
+
+  /// State Variables
+  List<BookOverviewListVO>? bookOverviewLists;
+
+  @override
+  void initState() {
+    _libraryModel.getBookOverviewLists().then((bookOverviewLists) {
+      setState(() {
+        this.bookOverviewLists = bookOverviewLists;
+      });
+    }).catchError(
+      (error) => debugPrint(error.toString()),
+    );
+
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +94,7 @@ class _HomePageState extends State<HomePage> {
                   onTitleTap: () => _goToMoreBooksPage(context),
                   onTapBook: () => _navigateToBookDetails(context),
                   onTapOverflow: () => _showMoreOptionsOnBook(context),
+                  bookOverviewLists: bookOverviewLists,
                 ),
               ),
               Visibility(
@@ -278,33 +301,36 @@ class EbooksSectionView extends StatelessWidget {
   final Function onTapBook;
   final Function onTapOverflow;
   final Function onTitleTap;
+  final List<BookOverviewListVO>? bookOverviewLists;
 
   EbooksSectionView({
     required this.onTapBook,
     required this.onTapOverflow,
     required this.onTitleTap,
+    required this.bookOverviewLists,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: MARGIN_MEDIUM),
-        HorizontalBookSectionView(
-          bookListTitle: EBOOKS_FOR_YOU,
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-          onTitleTap: onTitleTap,
-        ),
-        const SizedBox(height: MARGIN_MEDIUM),
-        HorizontalBookSectionView(
-          bookListTitle: ON_YOUR_WISHLIST,
-          onTapBook: onTapBook,
-          onTapOverflow: onTapOverflow,
-          onTitleTap: onTitleTap,
-        ),
-      ],
-    );
+    return bookOverviewLists != null
+        ? Column(
+            children: bookOverviewLists
+                    ?.map((bookOverviewList) => HorizontalBookSectionView(
+                          bookListTitle: bookOverviewList.listName ?? "",
+                          onTapBook: onTapBook,
+                          onTapOverflow: onTapOverflow,
+                          onTitleTap: onTitleTap,
+                          books: bookOverviewList.books,
+                        ))
+                    .toList() ??
+                [],
+          )
+        : Container(
+            margin: const EdgeInsets.only(
+              top: MARGIN_XXLARGE,
+            ),
+            child: const CircularProgressIndicator(),
+          );
   }
 }
 
