@@ -23,11 +23,11 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
   final String selectedViewFilter;
   final List<String> viewByFilters;
   final List<String> sortByFilters;
-  final List<BookVO> books;
+  final List<BookVO>? books;
   final Function onSortByFilterTap;
   final Function onViewByFilterTap;
-  final Function onGridBookTap;
-  final Function onListBookTap;
+  final Function(String) onGridBookTap;
+  final Function(String) onListBookTap;
   final Function onTapOverflow;
 
   @override
@@ -42,20 +42,20 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
         ),
         selectedViewFilter == viewByFilters.last
             ? ListView.builder(
-                itemCount: books.length,
+                itemCount: books?.length ?? 0,
                 padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 itemBuilder: (context, index) {
                   return BookListItemView(
-                    book: books[index],
+                    book: books?[index],
                     onBookTap: onListBookTap,
                     onTapOverflow: onTapOverflow,
                   );
                 },
               )
             : GridView.builder(
-                itemCount: books.length,
+                itemCount: books?.length ?? 0,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
@@ -65,7 +65,7 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   return BookGridItemView(
-                    book: books[index],
+                    book: books?[index],
                     gridCount:
                         selectedViewFilter == viewByFilters.first ? 3 : 2,
                     onBookTap: onGridBookTap,

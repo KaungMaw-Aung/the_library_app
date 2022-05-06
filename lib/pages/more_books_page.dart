@@ -73,9 +73,9 @@ class MoreBooksPage extends StatelessWidget {
                               return BookGridItemView(
                                 book: books[index],
                                 gridCount: 2,
-                                onBookTap: () => _navigateToBookDetails(
+                                onBookTap: (title) => _navigateToBookDetails(
                                   context,
-                                  books[index].title ?? "",
+                                  title,
                                 ),
                                 onOverflowTap: () =>
                                     _showMoreOptionsOnBook(context),

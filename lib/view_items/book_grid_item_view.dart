@@ -5,7 +5,7 @@ import 'package:the_library_app/resources/dimens.dart';
 class BookGridItemView extends StatelessWidget {
   final BookVO? book;
   final int gridCount;
-  final Function onBookTap;
+  final Function(String) onBookTap;
   final Function onOverflowTap;
 
   BookGridItemView({
@@ -18,7 +18,7 @@ class BookGridItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onBookTap(),
+      onTap: () => onBookTap(book?.title ?? ""),
       child: Container(
         margin: const EdgeInsets.all(MARGIN_MEDIUM),
         child: Column(

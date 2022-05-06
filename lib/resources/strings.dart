@@ -37,3 +37,4 @@ const DELETE_SHELF = "Delete shelf";
 const TOP_SELLING = "Top selling";
 const NEW_RELEASES = "New releases";
 const BOOKSTORE = "Bookstore";
+const YOUR_LIBRARY_IS_EMPTY = "Your Library is empty";

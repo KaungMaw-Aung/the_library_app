@@ -3,8 +3,8 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class BookListItemView extends StatelessWidget {
-  final BookVO book;
-  final Function onBookTap;
+  final BookVO? book;
+  final Function(String) onBookTap;
   final Function onTapOverflow;
 
   BookListItemView({
@@ -16,7 +16,7 @@ class BookListItemView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => onBookTap(),
+      onTap: () => onBookTap(book?.title ?? ""),
       child: Container(
         margin: const EdgeInsets.only(bottom: MARGIN_LARGE),
         child: Row(
@@ -33,7 +33,7 @@ class BookListItemView extends StatelessWidget {
                   borderRadius: BorderRadius.circular(MARGIN_SMALL),
                   image: DecorationImage(
                     image: NetworkImage(
-                      book.cover ?? "",
+                      book?.cover ?? "",
                     ),
                     fit: BoxFit.cover,
                   ),
@@ -47,7 +47,7 @@ class BookListItemView extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    book.title ?? "",
+                    book?.title ?? "",
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
@@ -56,7 +56,7 @@ class BookListItemView extends StatelessWidget {
                   ),
                   const SizedBox(height: MARGIN_MEDIUM),
                   Text(
-                    book.author ?? "",
+                    book?.author ?? "",
                     style: const TextStyle(
                       color: Colors.black54,
                     ),
