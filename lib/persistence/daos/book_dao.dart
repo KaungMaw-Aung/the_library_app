@@ -4,6 +4,8 @@ abstract class BookDao {
 
   void saveAllBooks(List<BookVO> books);
 
+  void saveBook(BookVO book);
+
   BookVO? getBookByTitle(String title);
 
 }

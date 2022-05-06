@@ -5,18 +5,23 @@ part 'book_overview_list_vo.g.dart';
 
 @JsonSerializable()
 class BookOverviewListVO {
-
   @JsonKey(name: "list_name")
   String? listName;
+
+  @JsonKey(name: "list_name_encoded")
+  String? listNameEncoded;
 
   @JsonKey(name: "books")
   List<BookVO>? books;
 
-  BookOverviewListVO(this.listName, this.books);
+  BookOverviewListVO(
+    this.listName,
+    this.listNameEncoded,
+    this.books,
+  );
 
   factory BookOverviewListVO.fromJson(Map<String, dynamic> json) =>
       _$BookOverviewListVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$BookOverviewListVOToJson(this);
-
 }

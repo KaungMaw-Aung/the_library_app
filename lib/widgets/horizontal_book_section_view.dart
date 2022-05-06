@@ -7,13 +7,15 @@ import 'horizontal_book_list_view.dart';
 
 class HorizontalBookSectionView extends StatelessWidget {
   final String bookListTitle;
+  final String listNameEncoded;
   final List<BookVO>? books;
   final Function(String) onTapBook;
   final Function onTapOverflow;
-  final Function onTitleTap;
+  final Function(String, String) onTitleTap;
 
   HorizontalBookSectionView({
     required this.bookListTitle,
+    required this.listNameEncoded,
     required this.onTapBook,
     required this.onTapOverflow,
     required this.onTitleTap,
@@ -26,7 +28,7 @@ class HorizontalBookSectionView extends StatelessWidget {
       children: [
         const SizedBox(height: MARGIN_MEDIUM),
         InkWell(
-          onTap: () => onTitleTap(),
+          onTap: () => onTitleTap(bookListTitle, listNameEncoded),
           child: BookListTitleAndMoreButtonView(
             bookListTitle: bookListTitle,
           ),

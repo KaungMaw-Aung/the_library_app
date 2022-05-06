@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/home_bloc.dart';
-import 'package:the_library_app/data/models/library_model.dart';
-import 'package:the_library_app/data/models/library_model_impl.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/pages/more_books_page.dart';
@@ -45,14 +43,16 @@ class HomePage extends StatelessWidget {
                   selector: (context, bloc) => bloc.carouselBooks,
                   builder: (context, visitedBooks, child) {
                     return Visibility(
-                      visible: (visitedBooks != null &&
-                          visitedBooks.isNotEmpty),
+                      visible:
+                          (visitedBooks != null && visitedBooks.isNotEmpty),
                       child: HorizontalBookCarouselView(
-                        onTapCarouselItem: () =>
-                            _navigateToBookDetails(context, ''),
+                        onTapCarouselItem: (bookTitle) =>
+                            _navigateToBookDetails(context, bookTitle),
                         onOverflowTap: () => _showMoreOptionsOnBook(context),
-                        visitedBooks: (visitedBooks != null && visitedBooks
-                            .isNotEmpty) ? visitedBooks : [],
+                        visitedBooks:
+                            (visitedBooks != null && visitedBooks.isNotEmpty)
+                                ? visitedBooks
+                                : [],
                       ),
                     );
                   },
@@ -91,12 +91,16 @@ class HomePage extends StatelessWidget {
                         selector: (context, bloc) => bloc.bookOverviewLists,
                         builder: (context, bookOverviewLists, child) {
                           return EbooksSectionView(
-                            onTitleTap: () => _goToMoreBooksPage(context),
-                            onTapBook: (title) =>
-                                _navigateToBookDetails(
-                                  context,
-                                  title,
-                                ),
+                            onTitleTap: (listName, listNameEncoded) =>
+                                _goToMoreBooksPage(
+                              context,
+                              listName,
+                              listNameEncoded,
+                            ),
+                            onTapBook: (title) => _navigateToBookDetails(
+                              context,
+                              title,
+                            ),
                             onTapOverflow: () =>
                                 _showMoreOptionsOnBook(context),
                             bookOverviewLists: bookOverviewLists,
@@ -113,7 +117,7 @@ class HomePage extends StatelessWidget {
                       visible: selectedTabIndex == 1,
                       child: AudiobooksSectionView(
                         onTapBook: () => _navigateToBookDetails(context, ''),
-                        onTitleTap: () => _goToMoreBooksPage(context),
+                        onTitleTap: () => {},
                       ),
                     );
                   },
@@ -126,11 +130,18 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _goToMoreBooksPage(BuildContext context) {
+  void _goToMoreBooksPage(
+    BuildContext context,
+    String listName,
+    String listNameEncoded,
+  ) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MoreBooksPage(),
+        builder: (context) => MoreBooksPage(
+          listNameEncoded: listNameEncoded,
+          listName: listName,
+        ),
       ),
     );
   }
@@ -315,7 +326,7 @@ class AudiobooksSectionView extends StatelessWidget {
 class EbooksSectionView extends StatelessWidget {
   final Function(String) onTapBook;
   final Function onTapOverflow;
-  final Function onTitleTap;
+  final Function(String, String) onTitleTap;
   final List<BookOverviewListVO>? bookOverviewLists;
 
   EbooksSectionView({
@@ -329,30 +340,31 @@ class EbooksSectionView extends StatelessWidget {
   Widget build(BuildContext context) {
     return bookOverviewLists != null
         ? Column(
-      children: bookOverviewLists
-          ?.map((bookOverviewList) =>
-          HorizontalBookSectionView(
-            bookListTitle: bookOverviewList.listName ?? "",
-            onTapBook: onTapBook,
-            onTapOverflow: onTapOverflow,
-            onTitleTap: onTitleTap,
-            books: bookOverviewList.books,
-          ))
-          .toList() ??
-          [],
-    )
+            children: bookOverviewLists
+                    ?.map((bookOverviewList) => HorizontalBookSectionView(
+                          bookListTitle: bookOverviewList.listName ?? "",
+                          listNameEncoded:
+                              bookOverviewList.listNameEncoded ?? "",
+                          onTapBook: onTapBook,
+                          onTapOverflow: onTapOverflow,
+                          onTitleTap: onTitleTap,
+                          books: bookOverviewList.books,
+                        ))
+                    .toList() ??
+                [],
+          )
         : Container(
-      margin: const EdgeInsets.only(
-        top: MARGIN_XXLARGE,
-      ),
-      child: const CircularProgressIndicator(),
-    );
+            margin: const EdgeInsets.only(
+              top: MARGIN_XXLARGE,
+            ),
+            child: const CircularProgressIndicator(),
+          );
   }
 }
 
 class HorizontalBookCarouselView extends StatelessWidget {
   final List<BookVO> visitedBooks;
-  final Function onTapCarouselItem;
+  final Function(String) onTapCarouselItem;
   final Function onOverflowTap;
 
   HorizontalBookCarouselView({

@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/network/api_constants.dart';
 import 'package:the_library_app/network/data_agents/library_data_agent.dart';
 import 'package:the_library_app/network/nytimes_api.dart';
@@ -24,5 +25,19 @@ class LibraryDataAgentRetrofitImpl extends LibraryDataAgent {
         .asStream()
         .map((response) => response.results?.lists)
         .first;
+  }
+
+  @override
+  Future<List<BookVO>?> getMoreOnOverviewList(String listName, int? offset) {
+    return _nyTimesApi
+        .getMoreOnOverviewList(NYTIMES_API_KEY, listName, offset)
+        .asStream()
+        .map((response) {
+      return response.results
+          ?.map((resultResponse) => resultResponse.bookDetails ?? [])
+          .toList()
+          .expand((bookDetails) => bookDetails)
+          .toList();
+    }).first;
   }
 }

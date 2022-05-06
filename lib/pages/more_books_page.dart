@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/more_books_bloc.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
@@ -7,141 +9,87 @@ import 'package:the_library_app/view_items/book_grid_item_view.dart';
 import 'book_details_page.dart';
 
 class MoreBooksPage extends StatelessWidget {
+  final String listName;
+  final String listNameEncoded;
 
-  List<BookVO> dummyBooks = [
-    BookVO(
-      "https://i.pinimg.com/originals/ed/5f/51/ed5f51b122684dd72381f09c8fc39cbe.jpg",
-      "Book One",
-      "Author One",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://www.theyoungfolks.com/wp-content/uploads/2017/08/six-of-crows-770x1156.jpg",
-      "Book Two",
-      "Author Two",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://rivetedlit.com/wp-content/uploads/2020/01/all-this-time-9781534466340_xlg.jpg",
-      "Book Three",
-      "Author Three",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
-      "Book Four",
-      "Author Four",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg",
-      "Book Five",
-      "Author Five",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://www.skipprichard.com/wp-content/uploads/2019/12/9780525645580.jpg",
-      "Book Six",
-      "Author Six",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://img.buzzfeed.com/buzzfeed-static/static/2020-12/22/20/asset/d501ee3b6aaa/sub-buzz-8285-1608667292-7.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto",
-      "Book Seven",
-      "Author Seven",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "http://bukovero.com/wp-content/uploads/2016/07/Harry_Potter_and_the_Cursed_Child_Special_Rehearsal_Edition_Book_Cover.jpg",
-      "Book Eight",
-      "Author Eight",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-    BookVO(
-      "https://edit.org/photos/images/cat/book-covers-big-2019101610.jpg-1300.jpg",
-      "Book Nine",
-      "Author Nine",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-    ),
-  ];
+  MoreBooksPage({
+    required this.listName,
+    required this.listNameEncoded,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  vertical: MARGIN_MEDIUM_2,
-                ),
-                child: Row(
-                  children: const [
-                    SizedBox(width: MARGIN_MEDIUM_2),
-                    Icon(Icons.arrow_back),
-                    SizedBox(width: MARGIN_LARGE),
-                    Text(
-                      "Book Section Title",
-                      style: TextStyle(
-                        fontSize: MARGIN_MEDIUM_3,
-                        fontWeight: FontWeight.w500,
+    return ChangeNotifierProvider(
+      create: (context) => MoreBookBloc(listNameEncoded),
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(
+                    vertical: MARGIN_MEDIUM_2,
+                  ),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: MARGIN_MEDIUM_2),
+                      const Icon(Icons.arrow_back),
+                      const SizedBox(width: MARGIN_LARGE),
+                      Expanded(
+                        child: Text(
+                          listName,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: MARGIN_MEDIUM_3,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-              const Divider(
-                color: Colors.black54,
-                height: 0,
-              ),
-              GridView.builder(
-                padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
-                itemCount: dummyBooks.length,
-                physics: const NeverScrollableScrollPhysics(),
-                shrinkWrap: true,
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 1 / 1.8,
+                const Divider(
+                  color: Colors.black54,
+                  height: 0,
                 ),
-                itemBuilder: (context, index) {
-                  return BookGridItemView(
-                    book: dummyBooks[index],
-                    gridCount: 2,
-                    onBookTap: () => _navigateToBookDetails(context),
-                    onOverflowTap: () => _showMoreOptionsOnBook(context),
-                  );
-                },
-              ),
-            ],
+                Selector<MoreBookBloc, List<BookVO>?>(
+                  selector: (context, bloc) => bloc.books,
+                  builder: (context, books, child) {
+                    return books != null
+                        ? GridView.builder(
+                            padding:
+                                const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+                            itemCount: books.length,
+                            physics: const NeverScrollableScrollPhysics(),
+                            shrinkWrap: true,
+                            gridDelegate:
+                                const SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              childAspectRatio: 1 / 1.8,
+                            ),
+                            itemBuilder: (context, index) {
+                              return BookGridItemView(
+                                book: books[index],
+                                gridCount: 2,
+                                onBookTap: () => _navigateToBookDetails(
+                                  context,
+                                  books[index].title ?? "",
+                                ),
+                                onOverflowTap: () =>
+                                    _showMoreOptionsOnBook(context),
+                              );
+                            },
+                          )
+                        : Container(
+                            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.4),
+                            child: const CircularProgressIndicator(),
+                          );
+                  },
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -264,13 +212,12 @@ class MoreBooksPage extends StatelessWidget {
     );
   }
 
-  void _navigateToBookDetails(BuildContext context) {
+  void _navigateToBookDetails(BuildContext context, String bookTitle) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailsPage(title: ''),
+        builder: (context) => BookDetailsPage(title: bookTitle),
       ),
     );
   }
-
 }

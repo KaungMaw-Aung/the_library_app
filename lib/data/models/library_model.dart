@@ -6,6 +6,8 @@ abstract class LibraryModel {
   /// From Network
   Future<List<BookOverviewListVO>?> getBookOverviewLists();
 
+  Future<List<BookVO>?> getMoreOnOverviewList(String listName, int? offset);
+
   /// From Database
   Future<BookVO?> getBookByTitle(String title);
 

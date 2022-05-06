@@ -21,6 +21,11 @@ class BookDaoImpl extends BookDao {
   }
 
   @override
+  void saveBook(BookVO book) {
+    getBookBox().put(book.title ?? "", book);
+  }
+
+  @override
   BookVO? getBookByTitle(String title) {
     return getBookBox().get(title);
   }

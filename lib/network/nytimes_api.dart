@@ -5,6 +5,7 @@ import 'package:retrofit/retrofit.dart';
 
 import 'api_constants.dart';
 import 'responses/book_overview_lists_response.dart';
+import 'responses/more_on_overview_list_response.dart';
 
 part 'nytimes_api.g.dart';
 
@@ -17,4 +18,10 @@ abstract class NYTimesApi {
     @Query(PARAM_API_KEY) String apiKey,
   );
 
+  @GET(ENDPOINT_GET_MORE_ON_OVERVIEW_LIST)
+  Future<MoreOnOverviewListResponse> getMoreOnOverviewList(
+    @Query(PARAM_API_KEY) String apiKey,
+    @Query(PARAM_LIST) String listName,
+    @Query(PARAM_OFFSET) int? offset,
+  );
 }
