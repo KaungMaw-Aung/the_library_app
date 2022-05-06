@@ -32,7 +32,7 @@ class BookVO {
   String? publisher;
 
   @HiveField(6)
-  int? createdAt;
+  DateTime? visitedAt;
 
   BookVO(
     this.cover,
@@ -41,7 +41,7 @@ class BookVO {
     this.description,
     this.price,
     this.publisher,
-    this.createdAt,
+    this.visitedAt,
   );
 
   factory BookVO.fromJson(Map<String, dynamic> json) =>

@@ -46,7 +46,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      1,
+      DateTime.now(),
     ),
     BookVO(
       "https://www.theyoungfolks.com/wp-content/uploads/2017/08/six-of-crows-770x1156.jpg",
@@ -55,7 +55,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      2,
+      DateTime.now(),
     ),
     BookVO(
       "https://rivetedlit.com/wp-content/uploads/2020/01/all-this-time-9781534466340_xlg.jpg",
@@ -64,7 +64,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      3,
+      DateTime.now(),
     ),
     BookVO(
       "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
@@ -73,7 +73,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      4,
+      DateTime.now(),
     ),
     BookVO(
       "https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg",
@@ -82,7 +82,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      5,
+      DateTime.now(),
     ),
     BookVO(
       "https://www.skipprichard.com/wp-content/uploads/2019/12/9780525645580.jpg",
@@ -91,7 +91,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      6,
+      DateTime.now(),
     ),
     BookVO(
       "https://img.buzzfeed.com/buzzfeed-static/static/2020-12/22/20/asset/d501ee3b6aaa/sub-buzz-8285-1608667292-7.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto",
@@ -100,7 +100,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      7,
+      DateTime.now(),
     ),
     BookVO(
       "http://bukovero.com/wp-content/uploads/2016/07/Harry_Potter_and_the_Cursed_Child_Special_Rehearsal_Edition_Book_Cover.jpg",
@@ -109,7 +109,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      8,
+      DateTime.now(),
     ),
     BookVO(
       "https://edit.org/photos/images/cat/book-covers-big-2019101610.jpg-1300.jpg",
@@ -118,7 +118,7 @@ class _LibraryPageState extends State<LibraryPage> {
       "Description",
       "0.0",
       "Publisher",
-      9,
+      DateTime.now(),
     ),
   ];
 
@@ -403,14 +403,16 @@ class _LibraryPageState extends State<LibraryPage> {
                     selectedSortFilter = sortByFilters.first;
                     dummyBooks.sort((first, second) {
                       return first.author?.codeUnits
-                          .reduce(
-                            (value, element) => value + element,
-                          )
-                          .compareTo(
-                            second.author?.codeUnits.reduce(
-                              (value, element) => value + element,
-                            ) ?? 0,
-                          ) ?? 0;
+                              .reduce(
+                                (value, element) => value + element,
+                              )
+                              .compareTo(
+                                second.author?.codeUnits.reduce(
+                                      (value, element) => value + element,
+                                    ) ??
+                                    0,
+                              ) ??
+                          0;
                     });
                   });
                   Navigator.pop(context);
@@ -427,14 +429,16 @@ class _LibraryPageState extends State<LibraryPage> {
                       selectedSortFilter = sortByFilters.first;
                       dummyBooks.sort((first, second) {
                         return first.author?.codeUnits
-                            .reduce(
-                              (value, element) => value + element,
-                            )
-                            .compareTo(
-                              second.author?.codeUnits.reduce(
-                                (value, element) => value + element,
-                              ) ?? 0,
-                            ) ?? 0;
+                                .reduce(
+                                  (value, element) => value + element,
+                                )
+                                .compareTo(
+                                  second.author?.codeUnits.reduce(
+                                        (value, element) => value + element,
+                                      ) ??
+                                      0,
+                                ) ??
+                            0;
                       });
                     });
                     Navigator.pop(context);
@@ -449,11 +453,11 @@ class _LibraryPageState extends State<LibraryPage> {
                   });
                   setState(() {
                     selectedSortFilter = sortByFilters[1];
-                    dummyBooks.sort((first, second) {
+                    /*dummyBooks.sort((first, second) {
                       return first.createdAt
                               ?.compareTo(second.createdAt ?? 0) ??
                           0;
-                    });
+                    });*/
                   });
                   Navigator.pop(context);
                 },
@@ -467,11 +471,11 @@ class _LibraryPageState extends State<LibraryPage> {
                     });
                     setState(() {
                       selectedSortFilter = sortByFilters[1];
-                      dummyBooks.sort((first, second) {
+                      /*dummyBooks.sort((first, second) {
                         return first.createdAt
                                 ?.compareTo(second.createdAt ?? 0) ??
                             0;
-                      });
+                      });*/
                     });
                     Navigator.pop(context);
                   },
@@ -487,14 +491,16 @@ class _LibraryPageState extends State<LibraryPage> {
                     selectedSortFilter = sortByFilters.last;
                     dummyBooks.sort((first, second) {
                       return first.title?.codeUnits
-                          .reduce(
-                            (value, element) => value + element,
-                          )
-                          .compareTo(
-                            second.title?.codeUnits.reduce(
-                              (value, element) => value + element,
-                            ) ?? 0,
-                          ) ?? 0;
+                              .reduce(
+                                (value, element) => value + element,
+                              )
+                              .compareTo(
+                                second.title?.codeUnits.reduce(
+                                      (value, element) => value + element,
+                                    ) ??
+                                    0,
+                              ) ??
+                          0;
                     });
                   });
                   Navigator.pop(context);
@@ -511,14 +517,16 @@ class _LibraryPageState extends State<LibraryPage> {
                       selectedSortFilter = sortByFilters.last;
                       dummyBooks.sort((first, second) {
                         return first.title?.codeUnits
-                            .reduce(
-                              (value, element) => value + element,
-                            )
-                            .compareTo(
-                              second.title?.codeUnits.reduce(
-                                (value, element) => value + element,
-                              ) ?? 0,
-                            ) ?? 0;
+                                .reduce(
+                                  (value, element) => value + element,
+                                )
+                                .compareTo(
+                                  second.title?.codeUnits.reduce(
+                                        (value, element) => value + element,
+                                      ) ??
+                                      0,
+                                ) ??
+                            0;
                       });
                     });
                     Navigator.pop(context);

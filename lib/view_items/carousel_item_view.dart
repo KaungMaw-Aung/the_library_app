@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class CarouselItemView extends StatelessWidget {
+  final BookVO? visitedBook;
   final Function onTapCarouselItem;
   final Function onOverflowTap;
 
-  CarouselItemView(
-      {required this.onTapCarouselItem, required this.onOverflowTap,});
+  CarouselItemView({
+    required this.onTapCarouselItem,
+    required this.onOverflowTap,
+    required this.visitedBook,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -21,13 +26,13 @@ class CarouselItemView extends StatelessWidget {
           color: Colors.transparent,
           elevation: MARGIN_MEDIUM,
           child: Container(
-            decoration: const BoxDecoration(
-              borderRadius: BorderRadius.all(
+            decoration: BoxDecoration(
+              borderRadius: const BorderRadius.all(
                 Radius.circular(MARGIN_CARD_MEDIUM_2),
               ),
               image: DecorationImage(
                 image: NetworkImage(
-                  "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg",
+                  visitedBook?.cover ?? "",
                 ),
                 fit: BoxFit.cover,
               ),

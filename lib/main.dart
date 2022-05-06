@@ -11,6 +11,7 @@ void main() async {
   Hive.registerAdapter(BookVOAdapter());
 
   await Hive.openBox<BookVO>(BOX_NAME_BOOK_VO);
+  await Hive.openBox<BookVO>(BOX_NAME_VISITED_BOOK_VO);
 
   runApp(const LibraryApp());
 }

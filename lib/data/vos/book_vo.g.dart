@@ -23,7 +23,7 @@ class BookVOAdapter extends TypeAdapter<BookVO> {
       fields[3] as String?,
       fields[4] as String?,
       fields[5] as String?,
-      fields[6] as int?,
+      fields[6] as DateTime?,
     );
   }
 
@@ -44,7 +44,7 @@ class BookVOAdapter extends TypeAdapter<BookVO> {
       ..writeByte(5)
       ..write(obj.publisher)
       ..writeByte(6)
-      ..write(obj.createdAt);
+      ..write(obj.visitedAt);
   }
 
   @override
@@ -69,7 +69,9 @@ BookVO _$BookVOFromJson(Map<String, dynamic> json) => BookVO(
       json['description'] as String?,
       json['price'] as String?,
       json['publisher'] as String?,
-      json['createdAt'] as int?,
+      json['visitedAt'] == null
+          ? null
+          : DateTime.parse(json['visitedAt'] as String),
     );
 
 Map<String, dynamic> _$BookVOToJson(BookVO instance) => <String, dynamic>{
@@ -79,5 +81,5 @@ Map<String, dynamic> _$BookVOToJson(BookVO instance) => <String, dynamic>{
       'description': instance.description,
       'price': instance.price,
       'publisher': instance.publisher,
-      'createdAt': instance.createdAt,
+      'visitedAt': instance.visitedAt?.toIso8601String(),
     };

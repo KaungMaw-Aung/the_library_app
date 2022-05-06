@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:the_library_app/data/models/library_model.dart';
 import 'package:the_library_app/data/models/library_model_impl.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 
 class HomeBloc extends ChangeNotifier {
   /// Model
@@ -10,6 +11,7 @@ class HomeBloc extends ChangeNotifier {
   /// State Variables
   int selectedTabIndex = 0;
   List<BookOverviewListVO>? bookOverviewLists;
+  List<BookVO>? carouselBooks;
 
   HomeBloc() {
     /// Get Book Overview Lists
@@ -17,6 +19,13 @@ class HomeBloc extends ChangeNotifier {
       this.bookOverviewLists = bookOverviewLists;
       notifyListeners();
     }).catchError((error) => debugPrint(error.toString()));
+
+    /// Get Visited Books For Carousel
+    _libraryModel.getAllVisitedBooksStream().listen((visitedBooks) {
+      carouselBooks = visitedBooks;
+      notifyListeners();
+    }).onError((error) => debugPrint(error.toString()));
+
   }
 
   void onTapTab(int index) {
