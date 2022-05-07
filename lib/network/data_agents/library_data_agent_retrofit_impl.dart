@@ -3,10 +3,12 @@ import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/network/api_constants.dart';
 import 'package:the_library_app/network/data_agents/library_data_agent.dart';
+import 'package:the_library_app/network/google_book_api.dart';
 import 'package:the_library_app/network/nytimes_api.dart';
 
 class LibraryDataAgentRetrofitImpl extends LibraryDataAgent {
   late NYTimesApi _nyTimesApi;
+  late GoogleBookApi _googleBookApi;
 
   static final LibraryDataAgentRetrofitImpl _singleton =
       LibraryDataAgentRetrofitImpl._internal();
@@ -16,6 +18,7 @@ class LibraryDataAgentRetrofitImpl extends LibraryDataAgent {
   LibraryDataAgentRetrofitImpl._internal() {
     Dio dio = Dio();
     _nyTimesApi = NYTimesApi(dio);
+    _googleBookApi = GoogleBookApi(dio);
   }
 
   @override
@@ -39,5 +42,16 @@ class LibraryDataAgentRetrofitImpl extends LibraryDataAgent {
           .expand((bookDetails) => bookDetails)
           .toList();
     }).first;
+  }
+
+  @override
+  Future<List<BookVO>?> searchAndGetBooksResult(String query) {
+    return _googleBookApi
+        .searchAndGetBooksResult(query)
+        .asStream()
+        .map((response) => response.items
+            ?.map((searchBook) => searchBook.convertToBookVO())
+            .toList())
+        .first;
   }
 }

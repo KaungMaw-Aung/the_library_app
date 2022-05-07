@@ -13,6 +13,8 @@ abstract class LibraryModel {
 
   Stream<List<BookVO>> getAllVisitedBooksStream();
 
+  Future<List<BookVO>?> searchAndGetBooksResult(String query);
+
 
 
 }

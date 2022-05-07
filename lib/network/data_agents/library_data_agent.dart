@@ -7,4 +7,6 @@ abstract class LibraryDataAgent {
 
   Future<List<BookVO>?> getMoreOnOverviewList(String listName, int? offset);
 
+  Future<List<BookVO>?> searchAndGetBooksResult(String query);
+
 }

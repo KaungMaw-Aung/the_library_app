@@ -62,18 +62,38 @@ class LibraryModelImpl extends LibraryModel {
 
   @override
   Future<List<BookVO>?> getMoreOnOverviewList(String listName, int? offset) {
-    return _dataAgent.getMoreOnOverviewList(listName, offset).asStream().map((books) {
+    return _dataAgent
+        .getMoreOnOverviewList(listName, offset)
+        .asStream()
+        .map((books) {
       /// Save books if they were not already in persistence
       return books?.map((book) {
         var resultBook = _bookDao.getBookByTitle(book.title ?? "");
         if (resultBook == null) {
-          book.cover = "https://www.theyoungfolks.com/wp-content/uploads/2017/08/six-of-crows-770x1156.jpg";
+          book.cover =
+              "https://www.theyoungfolks.com/wp-content/uploads/2017/08/six-of-crows-770x1156.jpg";
           _bookDao.saveBook(book);
           return book;
         } else {
           return resultBook;
         }
       }).toList();
+    }).first;
+  }
+
+  @override
+  Future<List<BookVO>?> searchAndGetBooksResult(String query) {
+    return _dataAgent
+        .searchAndGetBooksResult(query)
+        .asStream()
+        .map((searchResults) {
+      searchResults?.forEach((result) {
+        var resultBook = _bookDao.getBookByTitle(result.title ?? "");
+        if (resultBook == null) {
+          _bookDao.saveBook(result);
+        }
+      });
+      return searchResults;
     }).first;
   }
 }
