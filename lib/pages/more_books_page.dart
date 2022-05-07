@@ -5,6 +5,7 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 import 'package:the_library_app/view_items/book_grid_item_view.dart';
+import 'package:the_library_app/widgets/smart_vertical_two_columns_grid_view.dart';
 
 import 'book_details_page.dart';
 
@@ -24,51 +25,43 @@ class MoreBooksPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.white,
         body: SafeArea(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: MARGIN_MEDIUM_2,
-                  ),
-                  child: Row(
-                    children: [
-                      const SizedBox(width: MARGIN_MEDIUM_2),
-                      const Icon(Icons.arrow_back),
-                      const SizedBox(width: MARGIN_LARGE),
-                      Expanded(
-                        child: Text(
-                          listName,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                            fontSize: MARGIN_MEDIUM_3,
-                            fontWeight: FontWeight.w500,
-                          ),
+          child: Column(
+            children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: MARGIN_MEDIUM_2,
+                ),
+                child: Row(
+                  children: [
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    const Icon(Icons.arrow_back),
+                    const SizedBox(width: MARGIN_LARGE),
+                    Expanded(
+                      child: Text(
+                        listName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: MARGIN_MEDIUM_3,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
-                const Divider(
-                  color: Colors.black54,
-                  height: 0,
-                ),
-                Selector<MoreBookBloc, List<BookVO>?>(
-                  selector: (context, bloc) => bloc.books,
-                  builder: (context, books, child) {
-                    return books != null
-                        ? GridView.builder(
-                            padding:
-                                const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+              ),
+              const Divider(
+                color: Colors.black54,
+                height: 0,
+              ),
+              Selector<MoreBookBloc, List<BookVO>?>(
+                selector: (context, bloc) => bloc.books,
+                shouldRebuild: (oldValue, newValue) => oldValue != newValue,
+                builder: (context, books, child) {
+                  return books != null
+                      ? Expanded(
+                        child: SmartVerticalTwoColumnsGridView(
                             itemCount: books.length,
-                            physics: const NeverScrollableScrollPhysics(),
-                            shrinkWrap: true,
-                            gridDelegate:
-                                const SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              childAspectRatio: 1 / 1.8,
-                            ),
                             itemBuilder: (context, index) {
                               return BookGridItemView(
                                 book: books[index],
@@ -81,15 +74,22 @@ class MoreBooksPage extends StatelessWidget {
                                     _showMoreOptionsOnBook(context),
                               );
                             },
-                          )
-                        : Container(
-                            margin: EdgeInsets.only(top: MediaQuery.of(context).size.height * 0.4),
-                            child: const CircularProgressIndicator(),
-                          );
-                  },
-                )
-              ],
-            ),
+                            padding:
+                                const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+                            onListEndReached: () {
+                              MoreBookBloc bloc = Provider.of(context, listen: false);
+                              bloc.onListEndReached();
+                            },
+                          ),
+                      )
+                      : Container(
+                          margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.4),
+                          child: const CircularProgressIndicator(),
+                        );
+                },
+              )
+            ],
           ),
         ),
       ),
