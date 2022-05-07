@@ -98,7 +98,7 @@ class BookItemView extends StatelessWidget {
                     ),
                   ),
                   TextSpan(
-                    text: " \$${book?.price ?? ""}",
+                    text: " \$${book?.price ?? "0.0"}",
                     style: const TextStyle(
                       fontSize: TEXT_SMALL_2,
                     ),

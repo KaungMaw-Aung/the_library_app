@@ -4,6 +4,7 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 
 import 'package:the_library_app/pages/host_page.dart';
 import 'package:the_library_app/persistence/persistence_constants.dart';
+import 'package:collection/collection.dart';
 
 void main() async {
   await Hive.initFlutter();
@@ -14,6 +15,13 @@ void main() async {
   await Hive.openBox<BookVO>(BOX_NAME_VISITED_BOOK_VO);
 
   runApp(const LibraryApp());
+}
+
+class Animal {
+  String name;
+  List<String> type;
+
+  Animal(this.name, this.type);
 }
 
 class LibraryApp extends StatelessWidget {

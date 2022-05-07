@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/search_detail_bloc.dart';
+import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 import 'package:the_library_app/widgets/horizontal_book_section_view.dart';
@@ -14,53 +17,70 @@ class SearchDetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            const SizedBox(height: MARGIN_MEDIUM_2),
-            SearchBarView(
-              onSearchTextChanged: (input) {},
-              onSubmit: (searchedText) {},
-              autoFocus: false,
-              enabled: false,
-              preLoadText: searchedText,
-            ),
-            const Divider(
-              color: Colors.black54,
-              height: MARGIN_LARGE,
-            ),
-            Column(
+    return ChangeNotifierProvider(
+      create: (context) => SearchDetailBloc(searchedText),
+      child: Scaffold(
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
               children: [
-                HorizontalBookSectionView(
-                  bookListTitle: "Related Category One",
-                  listNameEncoded: '',
-                  onTapBook: (title) => _navigateToBookDetails(context),
-                  onTapOverflow: () => _showMoreOptionsOnBook(context),
-                  onTitleTap: (listName, listNameEncoded) {},
-                  books: [],
+                const SizedBox(height: MARGIN_MEDIUM_2),
+                SearchBarView(
+                  onSearchTextChanged: (input) {},
+                  onSubmit: (searchedText) {},
+                  autoFocus: false,
+                  enabled: false,
+                  preLoadText: searchedText,
                 ),
-                HorizontalBookSectionView(
-                  bookListTitle: "Related Category Two",
-                  listNameEncoded: '',
-                  onTapBook: (title) => _navigateToBookDetails(context),
-                  onTapOverflow: () => _showMoreOptionsOnBook(context),
-                  onTitleTap: (listName, listNameEncoded) {},
-                  books: [],
+                const Divider(
+                  color: Colors.black54,
+                  height: MARGIN_LARGE,
+                ),
+                Selector<SearchDetailBloc, List<BookOverviewListVO>?>(
+                  builder: (context, resultOverviewBookLists, child) {
+                    return Column(
+                      children: resultOverviewBookLists?.map((overviewList) {
+                            return HorizontalBookSectionView(
+                              bookListTitle: overviewList.listName ?? "",
+                              listNameEncoded:
+                                  overviewList.listNameEncoded ?? "",
+                              onTapBook: (title) => _navigateToBookDetails(
+                                context,
+                                title,
+                              ),
+                              onTapOverflow: () =>
+                                  _showMoreOptionsOnBook(context),
+                              onTitleTap: (listName, listNameEncoded) {
+                                _goToMoreBooksPage(
+                                  context,
+                                  listName,
+                                  listNameEncoded,
+                                );
+                              },
+                              books: overviewList.books,
+                            );
+                          }).toList() ??
+                          [],
+                    );
+                  },
+                  selector: (context, bloc) => bloc.resultOverviewBookLists,
                 ),
               ],
             ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  void _goToMoreBooksPage(BuildContext context) {
+  void _goToMoreBooksPage(BuildContext context, String listName, String listNameEncoded) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => MoreBooksPage(listNameEncoded: '', listName: '',),
+        builder: (context) => MoreBooksPage(
+          listNameEncoded: listNameEncoded,
+          listName: listName,
+        ),
       ),
     );
   }
@@ -181,13 +201,12 @@ class SearchDetailPage extends StatelessWidget {
     );
   }
 
-  void _navigateToBookDetails(BuildContext context) {
+  void _navigateToBookDetails(BuildContext context, String bookTitle) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailsPage(title: ''),
+        builder: (context) => BookDetailsPage(title: bookTitle),
       ),
     );
   }
-
 }

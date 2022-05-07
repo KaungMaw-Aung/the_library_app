@@ -34,6 +34,9 @@ class BookVO {
   @HiveField(6)
   DateTime? visitedAt;
 
+  @HiveField(7)
+  String? category;
+
   BookVO(
     this.cover,
     this.title,
@@ -42,6 +45,7 @@ class BookVO {
     this.price,
     this.publisher,
     this.visitedAt,
+    this.category,
   );
 
   factory BookVO.fromJson(Map<String, dynamic> json) =>
@@ -49,4 +53,8 @@ class BookVO {
 
   Map<String, dynamic> toJson() => _$BookVOToJson(this);
 
+  @override
+  String toString() {
+    return 'BookVO{title: $title, category: $category}';
+  }
 }

@@ -26,6 +26,7 @@ class SearchBookVO {
       null,
       volumeInfo?.publisher,
       null,
+      volumeInfo?.categories?.first,
     );
   }
 
