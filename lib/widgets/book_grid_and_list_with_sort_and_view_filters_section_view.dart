@@ -55,13 +55,16 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
                 },
               )
             : GridView.builder(
+                padding: const EdgeInsets.all(MARGIN_MEDIUM_2),
                 itemCount: books?.length ?? 0,
                 physics: const NeverScrollableScrollPhysics(),
                 shrinkWrap: true,
                 gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                   crossAxisCount:
                       selectedViewFilter == viewByFilters.first ? 3 : 2,
-                  childAspectRatio: 1 / 1.8,
+                  childAspectRatio: 1 / 2,
+                  mainAxisSpacing: MARGIN_MEDIUM_2,
+                  crossAxisSpacing: MARGIN_MEDIUM_2,
                 ),
                 itemBuilder: (context, index) {
                   return BookGridItemView(

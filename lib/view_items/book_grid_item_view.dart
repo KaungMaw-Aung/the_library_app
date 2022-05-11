@@ -20,7 +20,7 @@ class BookGridItemView extends StatelessWidget {
     return GestureDetector(
       onTap: () => onBookTap(book?.title ?? ""),
       child: Container(
-        margin: const EdgeInsets.all(MARGIN_MEDIUM),
+        // margin: const EdgeInsets.all(MARGIN_MEDIUM),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -136,4 +136,7 @@ class BookGridItemView extends StatelessWidget {
       ),
     );
   }
+
+
+
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/resources/dimens.dart';
 
 class SmartVerticalTwoColumnsGridView extends StatefulWidget {
   final int itemCount;
@@ -53,7 +54,9 @@ class _SmartVerticalTwoColumnsGridViewState extends State<SmartVerticalTwoColumn
         gridDelegate:
         const SliverGridDelegateWithFixedCrossAxisCount(
           crossAxisCount: 2,
-          childAspectRatio: 1 / 1.8,
+          childAspectRatio: 1 / 1.95,
+          mainAxisSpacing: MARGIN_MEDIUM_2,
+          crossAxisSpacing: MARGIN_MEDIUM_2,
         ),
         itemBuilder: widget.itemBuilder,
       );

@@ -74,8 +74,7 @@ class MoreBooksPage extends StatelessWidget {
                                     _showMoreOptionsOnBook(context),
                               );
                             },
-                            padding:
-                                const EdgeInsets.only(top: MARGIN_MEDIUM_2),
+                            padding: const EdgeInsets.all(MARGIN_MEDIUM_2),
                             onListEndReached: () {
                               MoreBookBloc bloc = Provider.of(context, listen: false);
                               bloc.onListEndReached();

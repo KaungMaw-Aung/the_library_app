@@ -18,7 +18,7 @@ class SortByAndViewByFilterButtonsView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        const SizedBox(width: MARGIN_MEDIUM_2),
+        const SizedBox(width: MARGIN_MEDIUM),
         TextButton.icon(
           onPressed: () {
             onSortByFilterTap();

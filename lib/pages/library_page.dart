@@ -17,7 +17,6 @@ import 'package:the_library_app/widgets/search_play_books_app_bar_view.dart';
 import 'book_details_page.dart';
 
 class LibraryPage extends StatelessWidget {
-
   final List<String> tabLabels = [YOUR_BOOKS_TAB_LABEL, YOUR_SHELVES_TAB_LABEL];
   final List<String> sortByFilters = ["Author", "Recent", "Title"];
   final List<String> viewByFilters = ["Grid 3x", "Grid 2x", "List"];
@@ -62,7 +61,7 @@ class LibraryPage extends StatelessWidget {
                                   indicatorSize: TabBarIndicatorSize.label,
                                   onTap: (index) {
                                     LibraryBloc bloc =
-                                    Provider.of(context, listen: false);
+                                        Provider.of(context, listen: false);
                                     bloc.onTapTab(index);
                                   },
                                   tabs: tabLabels.map((label) {
@@ -78,59 +77,42 @@ class LibraryPage extends StatelessWidget {
                             thickness: 1.5,
                           ),
                           Visibility(
-                              visible: selectedTabIndex == 0,
-                              child: Selector<LibraryBloc, String>(
-                                selector: (context, bloc) =>
-                                bloc.selectedSortFilter,
-                                builder: (context, selectedSortFilter, child) {
-                                  return Selector<LibraryBloc, String>(
-                                      selector: (context, bloc) =>
-                                      bloc.selectedViewFilter,
-                                      builder: (context, selectedViewFilter, child) {
-                                        return Selector<LibraryBloc, List<BookVO>?>(
-                                          selector: (context, bloc) => bloc.myBooks,
-                                          builder: (context, myBooks, child) {
-                                            return Selector<LibraryBloc, List<BookFilterChipVO>>(
-                                              selector: (context, bloc) => bloc.chipsData,
-                                              shouldRebuild: (oldValue, newValue) => oldValue != newValue,
-                                              builder: (context, chipsData, child) {
-                                                return myBooks != null
-                                                    ? YourBooksSectionView(
-                                                        chipsData: chipsData,
-                                                        onTapChip: (label, isSelected) {
-                                                          LibraryBloc bloc = Provider.of(context, listen: false);
-                                                          bloc.onTapChip(label, isSelected);
-                                                        },
-                                                        selectedSortFilter: selectedSortFilter,
-                                                        selectedViewFilter: selectedViewFilter,
-                                                        onTapClearButton: () {
-                                                          LibraryBloc bloc =
-                                                          Provider.of(context, listen: false);
-                                                          bloc.onTapClearButton();
-                                                        },
-                                                        books: myBooks,
-                                                        sortByFilters: sortByFilters,
-                                                        viewByFilters: viewByFilters,
-                                                        onGridBookTap: (title) => _navigateToBookDetails(context, title),
-                                                        onListBookTap: (title) => _navigateToBookDetails(context, title),
-                                                        onTapOverflow: () => _showMoreOptionsOnBook(context),
-                                                        onViewByFilterTap: () {
-                                                          _showViewByFilterBottomSheet(context);
-                                                        },
-                                                        onSortByFilterTap: () {
-                                                          _showSortByFilterBottomSheet(context);
-                                                        },
-                                                )
-                                                    : const Text(
-                                                        YOUR_LIBRARY_IS_EMPTY,
-                                                      );
-                                              },
-                                            );
-                                          },
-                                        );
-                                      });
-                                },
-                              )),
+                            visible: selectedTabIndex == 0,
+                            child: Consumer<LibraryBloc>(
+                              builder: (context, bloc, child) {
+                                return bloc.myBooks != null
+                                    ? YourBooksSectionView(
+                                  chipsData: bloc.chipsData,
+                                  onTapChip: (label, isSelected) {
+                                    LibraryBloc bloc = Provider.of(context, listen: false);
+                                    bloc.onTapChip(label, isSelected);
+                                  },
+                                  selectedSortFilter: bloc.selectedSortFilter,
+                                  selectedViewFilter: bloc.selectedViewFilter,
+                                  onTapClearButton: () {
+                                    LibraryBloc bloc =
+                                    Provider.of(context, listen: false);
+                                    bloc.onTapClearButton();
+                                  },
+                                  books: bloc.myBooks,
+                                  sortByFilters: sortByFilters,
+                                  viewByFilters: viewByFilters,
+                                  onGridBookTap: (title) => _navigateToBookDetails(context, title),
+                                  onListBookTap: (title) => _navigateToBookDetails(context, title),
+                                  onTapOverflow: () => _showMoreOptionsOnBook(context),
+                                  onViewByFilterTap: () {
+                                    _showViewByFilterBottomSheet(context);
+                                  },
+                                  onSortByFilterTap: () {
+                                    _showSortByFilterBottomSheet(context);
+                                  },
+                                )
+                                    : const Text(
+                                  YOUR_LIBRARY_IS_EMPTY,
+                                );
+                              },
+                            ),
+                          ),
                           Visibility(
                             visible: selectedTabIndex == 1,
                             child: YourShelvesSectionView(
