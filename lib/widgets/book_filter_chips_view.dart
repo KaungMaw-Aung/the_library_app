@@ -1,3 +1,4 @@
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/resources/colors.dart';
@@ -39,7 +40,7 @@ class BookFilterChipsView extends StatelessWidget {
               ),
             ),
             const SizedBox(width: MARGIN_MEDIUM),
-            ...chipsData.map(
+            /* ...chipsData.map(
                   (chipData) {
                 return Row(
                   children: [
@@ -64,7 +65,63 @@ class BookFilterChipsView extends StatelessWidget {
                   ],
                 );
               },
+            ).toList(),*/
+            ...chipsData
+                .where((element) => element.isSelected == true)
+                .map(
+              (chipData) {
+                return Row(
+                  children: [
+                    FilterChip(
+                      label: Text(chipData.label),
+                      labelStyle: TextStyle(
+                        color:
+                            chipData.isSelected ? Colors.white : Colors.black,
+                      ),
+                      backgroundColor: Colors.white,
+                      selectedColor: FILTER_CHIP_SELECTED_BG_COLOR,
+                      showCheckmark: false,
+                      selected: chipData.isSelected,
+                      side: chipData.isSelected
+                          ? null
+                          : const BorderSide(color: Colors.black12),
+                      onSelected: (isSelected) {
+                        onTapChip(chipData.label, isSelected);
+                      },
+                    ),
+                    const SizedBox(width: MARGIN_MEDIUM),
+                  ],
+                );
+              },
             ).toList(),
+            ...chipsData
+                .where((element) => element.isSelected == false)
+                .map(
+                  (chipData) {
+                return Row(
+                  children: [
+                    FilterChip(
+                      label: Text(chipData.label),
+                      labelStyle: TextStyle(
+                        color:
+                        chipData.isSelected ? Colors.white : Colors.black,
+                      ),
+                      backgroundColor: Colors.white,
+                      selectedColor: FILTER_CHIP_SELECTED_BG_COLOR,
+                      showCheckmark: false,
+                      selected: chipData.isSelected,
+                      side: chipData.isSelected
+                          ? null
+                          : const BorderSide(color: Colors.black12),
+                      onSelected: (isSelected) {
+                        onTapChip(chipData.label, isSelected);
+                      },
+                    ),
+                    const SizedBox(width: MARGIN_MEDIUM),
+                  ],
+                );
+              },
+            ).toList()
           ],
         ),
       ),

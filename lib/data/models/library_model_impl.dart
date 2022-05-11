@@ -32,6 +32,12 @@ class LibraryModelImpl extends LibraryModel {
       // flatten multiple lists into one
       if (bookOverviewLists != null) {
         var books = bookOverviewLists
+            .map((bookOverviewList) {
+              bookOverviewList.books?.forEach((book) {
+                book.category = bookOverviewList.listName;
+              });
+              return bookOverviewList;
+            })
             .map((value) => value.books ?? [])
             .toList()
             .expand((bookList) => bookList)

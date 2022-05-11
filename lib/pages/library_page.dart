@@ -82,34 +82,44 @@ class LibraryPage extends StatelessWidget {
                               builder: (context, bloc, child) {
                                 return bloc.myBooks != null
                                     ? YourBooksSectionView(
-                                  chipsData: bloc.chipsData,
-                                  onTapChip: (label, isSelected) {
-                                    LibraryBloc bloc = Provider.of(context, listen: false);
-                                    bloc.onTapChip(label, isSelected);
-                                  },
-                                  selectedSortFilter: bloc.selectedSortFilter,
-                                  selectedViewFilter: bloc.selectedViewFilter,
-                                  onTapClearButton: () {
-                                    LibraryBloc bloc =
-                                    Provider.of(context, listen: false);
-                                    bloc.onTapClearButton();
-                                  },
-                                  books: bloc.myBooks,
-                                  sortByFilters: sortByFilters,
-                                  viewByFilters: viewByFilters,
-                                  onGridBookTap: (title) => _navigateToBookDetails(context, title),
-                                  onListBookTap: (title) => _navigateToBookDetails(context, title),
-                                  onTapOverflow: () => _showMoreOptionsOnBook(context),
-                                  onViewByFilterTap: () {
-                                    _showViewByFilterBottomSheet(context);
-                                  },
-                                  onSortByFilterTap: () {
-                                    _showSortByFilterBottomSheet(context);
-                                  },
-                                )
+                                        chipsData: bloc.chipsData ?? [],
+                                        onTapChip: (label, isSelected) {
+                                          LibraryBloc bloc = Provider.of(
+                                              context,
+                                              listen: false);
+                                          bloc.onTapChip(label, isSelected);
+                                        },
+                                        selectedSortFilter:
+                                            bloc.selectedSortFilter,
+                                        selectedViewFilter:
+                                            bloc.selectedViewFilter,
+                                        onTapClearButton: () {
+                                          LibraryBloc bloc = Provider.of(
+                                              context,
+                                              listen: false);
+                                          bloc.onTapClearButton();
+                                        },
+                                        books: bloc.myBooks,
+                                        sortByFilters: sortByFilters,
+                                        viewByFilters: viewByFilters,
+                                        onGridBookTap: (title) =>
+                                            _navigateToBookDetails(
+                                                context, title),
+                                        onListBookTap: (title) =>
+                                            _navigateToBookDetails(
+                                                context, title),
+                                        onTapOverflow: () =>
+                                            _showMoreOptionsOnBook(context),
+                                        onViewByFilterTap: () {
+                                          _showViewByFilterBottomSheet(context);
+                                        },
+                                        onSortByFilterTap: () {
+                                          _showSortByFilterBottomSheet(context);
+                                        },
+                                      )
                                     : const Text(
-                                  YOUR_LIBRARY_IS_EMPTY,
-                                );
+                                        YOUR_LIBRARY_IS_EMPTY,
+                                      );
                               },
                             ),
                           ),
