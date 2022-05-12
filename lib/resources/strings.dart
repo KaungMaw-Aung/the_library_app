@@ -38,3 +38,7 @@ const TOP_SELLING = "Top selling";
 const NEW_RELEASES = "New releases";
 const BOOKSTORE = "Bookstore";
 const YOUR_LIBRARY_IS_EMPTY = "Your Library is empty";
+const EMPTY = "empty";
+const COULD_NOT_CREATE_THIS_SHELF = "Couldn't create this shelf";
+const ENTER_A_SHELF_NAME = "Enter a shelf name";
+const OK = "OK";

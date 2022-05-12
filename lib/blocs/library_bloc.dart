@@ -3,6 +3,7 @@ import 'package:the_library_app/data/models/library_model.dart';
 import 'package:the_library_app/data/models/library_model_impl.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 
 class LibraryBloc extends ChangeNotifier {
   final List<String> sortByFilters = ["Author", "Recent", "Title"];
@@ -23,6 +24,7 @@ class LibraryBloc extends ChangeNotifier {
   String selectedViewFilter = "Grid 3x";
   int selectedTabIndex = 0;
   List<BookFilterChipVO>? chipsData;
+  List<ShelfVO>? shelves;
 
   /// Model
   final LibraryModel _libraryModel = LibraryModelImpl();
@@ -58,6 +60,13 @@ class LibraryBloc extends ChangeNotifier {
       }
       notifyListeners();
     }).onError((error) => debugPrint(error.toString()));
+
+    /// Get Shelves
+    _libraryModel.getAllShelvesStream().listen((shelves) {
+      this.shelves = _sortShelvesByRecent(shelves);
+      notifyListeners();
+    }).onError((error) => debugPrint(error.toString()));
+
   }
 
   void getCategoryChipsFromVisitedBooks(List<BookVO> books) {
@@ -194,6 +203,13 @@ class LibraryBloc extends ChangeNotifier {
       return 0;
     });
     return booksToSort.reversed.toList();
+  }
+
+  List<ShelfVO> _sortShelvesByRecent(List<ShelfVO> shelvesToSort) {
+    shelvesToSort.sort((previous, next) {
+      return previous.createdAt.compareTo(next.createdAt);
+    });
+    return shelvesToSort;
   }
 
   List<BookVO> _filterBooksByCategories(

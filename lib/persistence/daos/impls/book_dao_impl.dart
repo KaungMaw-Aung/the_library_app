@@ -21,8 +21,8 @@ class BookDaoImpl extends BookDao {
   }
 
   @override
-  void saveBook(BookVO book) {
-    getBookBox().put(book.title ?? "", book);
+  void saveBook(BookVO book) async {
+    await getBookBox().put(book.title ?? "", book);
   }
 
   @override

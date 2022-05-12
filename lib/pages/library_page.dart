@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/library_bloc.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/pages/create_new_shelf_page.dart';
 import 'package:the_library_app/pages/shelf_details_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
@@ -125,9 +126,14 @@ class LibraryPage extends StatelessWidget {
                           ),
                           Visibility(
                             visible: selectedTabIndex == 1,
-                            child: YourShelvesSectionView(
-                              onShelfTap: () =>
-                                  _navigateToShelfDetailsPage(context),
+                            child: Selector<LibraryBloc, List<ShelfVO>?> (
+                              selector: (context, bloc) => bloc.shelves,
+                              builder: (context, shelves, child) {
+                                return YourShelvesSectionView(
+                                  onShelfTap: () => _navigateToShelfDetailsPage(context),
+                                  shelves: shelves ?? [],
+                                );
+                              },
                             ),
                           ),
                         ],
@@ -514,21 +520,29 @@ class CreateNewShelfButtonView extends StatelessWidget {
 
 class YourShelvesSectionView extends StatelessWidget {
   final Function onShelfTap;
+  final List<ShelfVO> shelves;
 
-  YourShelvesSectionView({required this.onShelfTap});
+  YourShelvesSectionView({
+    required this.onShelfTap,
+    required this.shelves,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.only(top: MARGIN_LARGE),
-      physics: const NeverScrollableScrollPhysics(),
-      shrinkWrap: true,
-      children: [
-        BookShelfView(
-          onShelfTap: onShelfTap,
-        ),
-      ],
-    );
+    return shelves.isNotEmpty
+        ? ListView(
+            padding: const EdgeInsets.only(top: MARGIN_LARGE),
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            children: shelves
+                .map(
+                  (shelf) => BookShelfView(
+                    onShelfTap: onShelfTap,
+                    shelf: shelf,
+                  ),
+                ).toList(),
+          )
+        : Container();
   }
 }
 

@@ -2,11 +2,14 @@ import 'package:stream_transform/stream_transform.dart';
 import 'package:the_library_app/data/models/library_model.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/network/data_agents/library_data_agent.dart';
 import 'package:the_library_app/network/data_agents/library_data_agent_retrofit_impl.dart';
 import 'package:the_library_app/persistence/daos/book_dao.dart';
 import 'package:the_library_app/persistence/daos/impls/book_dao_impl.dart';
+import 'package:the_library_app/persistence/daos/impls/shelf_dao_impl.dart';
 import 'package:the_library_app/persistence/daos/impls/visited_book_dao_impl.dart';
+import 'package:the_library_app/persistence/daos/shelf_dao.dart';
 import 'package:the_library_app/persistence/daos/visited_book_dao.dart';
 
 class LibraryModelImpl extends LibraryModel {
@@ -22,6 +25,7 @@ class LibraryModelImpl extends LibraryModel {
   /// Daos
   final BookDao _bookDao = BookDaoImpl();
   final VisitedBookDao _visitedBookDao = VisitedBookDaoImpl();
+  final ShelfDao _shelfDao = ShelfDaoImpl();
 
   @override
   Future<List<BookOverviewListVO>?> getBookOverviewLists() {
@@ -101,5 +105,18 @@ class LibraryModelImpl extends LibraryModel {
       });
       return searchResults;
     }).first;
+  }
+
+  @override
+  void createShelf(ShelfVO shelf) {
+    _shelfDao.createShelf(shelf);
+  }
+
+  @override
+  Stream<List<ShelfVO>> getAllShelvesStream() {
+    return _shelfDao
+        .getAllEventsFromShelfBox()
+        .startWith(_shelfDao.getAllShelvesStream())
+        .map((event) => _shelfDao.getAllShelves());
   }
 }
