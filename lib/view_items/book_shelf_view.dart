@@ -4,7 +4,7 @@ import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
 
 class BookShelfView extends StatelessWidget {
-  final Function onShelfTap;
+  final Function(String) onShelfTap;
   final ShelfVO shelf;
 
   BookShelfView({
@@ -17,7 +17,7 @@ class BookShelfView extends StatelessWidget {
     return Column(
       children: [
         GestureDetector(
-          onTap: () => onShelfTap(),
+          onTap: () => onShelfTap(shelf.id),
           child: SizedBox(
             height: SHELF_BOOK_COVER_HEIGHT + 1,
             child: Column(

@@ -119,4 +119,27 @@ class LibraryModelImpl extends LibraryModel {
         .startWith(_shelfDao.getAllShelvesStream())
         .map((event) => _shelfDao.getAllShelves());
   }
+
+  @override
+  Future<ShelfVO?> getShelfById(String shelfId) {
+    return Future.value(_shelfDao.getShelfById(shelfId));
+  }
+
+  @override
+  Stream<ShelfVO?> getShelfStreamById(String shelfId) {
+    return _shelfDao
+        .getAllEventsFromShelfBox()
+        .startWith(_shelfDao.getShelfStreamById(shelfId))
+        .map((event) => _shelfDao.getShelfById(shelfId));
+  }
+
+  @override
+  void updateShelfNameById(String shelfId, String shelfName) {
+    _shelfDao.updateShelfNameById(shelfId, shelfName);
+  }
+
+  @override
+  void deleteShelfById(String shelfId) {
+    _shelfDao.deleteShelfById(shelfId);
+  }
 }

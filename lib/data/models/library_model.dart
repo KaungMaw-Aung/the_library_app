@@ -20,4 +20,12 @@ abstract class LibraryModel {
 
   Stream<List<ShelfVO>> getAllShelvesStream();
 
+  Future<ShelfVO?> getShelfById(String shelfId);
+
+  Stream<ShelfVO?> getShelfStreamById(String shelfId);
+
+  void updateShelfNameById(String shelfId, String shelfName);
+
+  void deleteShelfById(String shelfId);
+
 }

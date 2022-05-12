@@ -1,19 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/shelf_details_bloc.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
-import 'package:the_library_app/data/vos/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
-import 'package:the_library_app/widgets/book_filter_chips_view.dart';
-import 'package:the_library_app/widgets/book_grid_and_list_with_sort_and_view_filters_section_view.dart';
 
 import 'book_details_page.dart';
 
-class ShelfDetailsPage extends StatefulWidget {
-  @override
-  State<ShelfDetailsPage> createState() => _ShelfDetailsPageState();
-}
+class ShelfDetailsPage extends StatelessWidget {
+  final String shelfId;
 
-class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
+  ShelfDetailsPage({required this.shelfId});
+
   List<BookFilterChipVO> chipsData = [
     BookFilterChipVO("Not started", false),
     BookFilterChipVO("In progress", false),
@@ -21,239 +20,278 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
   final List<String> sortByFilters = ["Author", "Recent", "Title"];
   final List<String> viewByFilters = ["Grid 3x", "Grid 2x", "List"];
 
-  /// Dummy Data
-  List<BookVO> dummyBooks = [
-    BookVO(
-      "https://i.pinimg.com/originals/ed/5f/51/ed5f51b122684dd72381f09c8fc39cbe.jpg",
-      "Book One",
-      "Author One",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://www.theyoungfolks.com/wp-content/uploads/2017/08/six-of-crows-770x1156.jpg",
-      "Book Two",
-      "Author Two",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://rivetedlit.com/wp-content/uploads/2020/01/all-this-time-9781534466340_xlg.jpg",
-      "Book Three",
-      "Author Three",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
-      "Book Four",
-      "Author Four",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://marketplace.canva.com/EAD7WuSVrt0/1/0/1003w/canva-colorful-illustration-young-adult-book-cover-LVthABb24ik.jpg",
-      "Book Five",
-      "Author Five",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://www.skipprichard.com/wp-content/uploads/2019/12/9780525645580.jpg",
-      "Book Six",
-      "Author Six",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://img.buzzfeed.com/buzzfeed-static/static/2020-12/22/20/asset/d501ee3b6aaa/sub-buzz-8285-1608667292-7.jpg?downsize=700%3A%2A&output-quality=auto&output-format=auto",
-      "Book Seven",
-      "Author Seven",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "http://bukovero.com/wp-content/uploads/2016/07/Harry_Potter_and_the_Cursed_Child_Special_Rehearsal_Edition_Book_Cover.jpg",
-      "Book Eight",
-      "Author Eight",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-    BookVO(
-      "https://edit.org/photos/images/cat/book-covers-big-2019101610.jpg-1300.jpg",
-      "Book Nine",
-      "Author Nine",
-      "Description",
-      "0.0",
-      "Publisher",
-      DateTime.now(),
-      "comedy",
-    ),
-  ];
-
   /// State Variables
   int? groupValue = 1;
   int? viewFilterGroupValue = 0;
   String selectedSortFilter = "Recent";
   String selectedViewFilter = "Grid 3x";
 
+  final TextEditingController _controller = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
+    return ChangeNotifierProvider<ShelfDetailsBloc>(
+      create: (context) => ShelfDetailsBloc(shelfId),
+      child: Scaffold(
         backgroundColor: Colors.white,
-        elevation: 0,
-        leading: const Icon(
-          Icons.chevron_left,
-          color: Colors.black,
-          size: MARGIN_XLARGE,
-        ),
-        actions: [
-          GestureDetector(
-            onTap: () => _showOptionsOnBookShelf(context),
-            child: const Icon(
-              Icons.more_horiz,
-              color: Colors.black,
-            ),
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          elevation: 0,
+          leading: Selector<ShelfDetailsBloc, bool>(
+            selector: (context, bloc) => bloc.showShelfEditViews,
+            builder: (context, showShelfEditViews, child) {
+              return showShelfEditViews
+                  ? GestureDetector(
+                      onTap: () {
+                        _renameShelf(context, shelfId, _controller.text);
+                      },
+                      child: const Icon(
+                        Icons.check,
+                        color: Colors.blue,
+                      ),
+                    )
+                  : const Icon(
+                      Icons.chevron_left,
+                      color: Colors.black,
+                      size: MARGIN_XLARGE,
+                    );
+            },
           ),
-          const SizedBox(width: MARGIN_MEDIUM_2),
-        ],
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: MARGIN_XLARGE),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-              child: const Text(
-                "10 Interaction Design Books to Read",
-                style: TextStyle(
-                  fontSize: TEXT_HEADING_2X,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-            ),
-            const SizedBox(height: MARGIN_MEDIUM),
-            Container(
-              margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-              child: const Text(
-                "3 books",
-                style: TextStyle(
-                  color: Colors.black54,
-                ),
-              ),
-            ),
-            const Divider(
-              color: Colors.black54,
-              height: MARGIN_XLARGE,
-            ),
-            BookFilterChipsView(
-              chipsData: chipsData,
-              onTapChip: (label, isSelected) {
-                setState(() {
-                  chipsData = chipsData.map((originalChipData) {
-                    if (originalChipData.label == label) {
-                      originalChipData.isSelected = isSelected;
+          actions: [
+            Builder(builder: (context) {
+              return GestureDetector(
+                onTap: () {
+                  ShelfDetailsBloc bloc = Provider.of(context, listen: false);
+                  _showOptionsOnBookShelf(
+                    context,
+                    bloc.shelf?.name ?? "",
+                    shelfId,
+                  ).then((value) {
+                    if (value) {
+                      Navigator.pop(context);
                     }
-                    return originalChipData;
-                  }).toList();
-                });
-              },
-              onTapClearButton: () {
-                setState(
-                  () {
-                    chipsData = chipsData.map((chipData) {
-                      chipData.isSelected = false;
-                      return chipData;
-                    }).toList();
-                  },
-                );
-              },
-            ),
-            BookGridAndListWithSortAndViewFiltersSectionView(
-              selectedSortFilter: selectedSortFilter,
-              selectedViewFilter: selectedViewFilter,
-              viewByFilters: viewByFilters,
-              sortByFilters: sortByFilters,
-              books: dummyBooks,
-              onSortByFilterTap: () => _showSortByFilterBottomSheet(context),
-              onViewByFilterTap: () => _showViewByFilterBottomSheet(context),
-              onGridBookTap: (title) => _navigateToBookDetails(context),
-              onListBookTap: (title) => _navigateToBookDetails(context),
-              onTapOverflow: () => _showMoreOptionsOnBook(context),
-            ),
+                  });
+                },
+                child: const Icon(
+                  Icons.more_horiz,
+                  color: Colors.black,
+                ),
+              );
+            }),
+            const SizedBox(width: MARGIN_MEDIUM_2),
           ],
+        ),
+        body: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const SizedBox(height: MARGIN_MEDIUM_2),
+              Selector<ShelfDetailsBloc, bool>(
+                selector: (context, bloc) => bloc.showShelfEditViews,
+                builder: (context, showShelfEditViews, child) {
+                  return showShelfEditViews
+                      ? Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: MARGIN_MEDIUM_3,
+                          ),
+                          child: Builder(builder: (context) {
+                            return TextField(
+                              controller: _controller,
+                              autofocus: true,
+                              decoration: const InputDecoration(
+                                hintText: SHELF_NAME,
+                                hintStyle: TextStyle(
+                                  color: Colors.black38,
+                                ),
+                              ),
+                              style: const TextStyle(
+                                fontSize: TEXT_HEADING_1X,
+                                fontWeight: FontWeight.w500,
+                              ),
+                              onSubmitted: (name) {
+                                _renameShelf(
+                                    context, shelfId, _controller.text);
+                              },
+                            );
+                          }),
+                        )
+                      : Selector<ShelfDetailsBloc, ShelfVO?>(
+                          selector: (context, bloc) => bloc.shelf,
+                          builder: (context, shelf, child) {
+                            _controller.text = shelf?.name ?? "";
+                            return ShelfNameAndBookCountSectionView(
+                              shelf: shelf,
+                            );
+                          },
+                        );
+                },
+              ),
+              const Divider(
+                color: Colors.black54,
+                height: MARGIN_XLARGE,
+              ),
+              /*BookFilterChipsView(
+                chipsData: chipsData,
+                onTapChip: (label, isSelected) {
+                  setState(() {
+                    chipsData = chipsData.map((originalChipData) {
+                      if (originalChipData.label == label) {
+                        originalChipData.isSelected = isSelected;
+                      }
+                      return originalChipData;
+                    }).toList();
+                  });
+                },
+                onTapClearButton: () {
+                  setState(
+                    () {
+                      chipsData = chipsData.map((chipData) {
+                        chipData.isSelected = false;
+                        return chipData;
+                      }).toList();
+                    },
+                  );
+                },
+              ),
+              BookGridAndListWithSortAndViewFiltersSectionView(
+                selectedSortFilter: selectedSortFilter,
+                selectedViewFilter: selectedViewFilter,
+                viewByFilters: viewByFilters,
+                sortByFilters: sortByFilters,
+                books: dummyBooks,
+                onSortByFilterTap: () => _showSortByFilterBottomSheet(context),
+                onViewByFilterTap: () => _showViewByFilterBottomSheet(context),
+                onGridBookTap: (title) => _navigateToBookDetails(context),
+                onListBookTap: (title) => _navigateToBookDetails(context),
+                onTapOverflow: () => _showMoreOptionsOnBook(context),
+              ),*/
+            ],
+          ),
         ),
       ),
     );
   }
 
-  void _showOptionsOnBookShelf(BuildContext context) {
+  void _renameShelf(BuildContext context, String shelfId, String updatedName) {
+    if (updatedName.isNotEmpty) {
+      ShelfDetailsBloc bloc = Provider.of(context, listen: false);
+      bloc.updateShelfName(shelfId, updatedName);
+      bloc.doneEditShelf();
+    } else {
+      showShelfNameEmptyWarningSheet(context);
+    }
+  }
+
+  void showShelfNameEmptyWarningSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
-        return StatefulBuilder(builder: (context, setModalState) {
-          return Wrap(
-            children: const [
-              ListTile(
-                title: Text(
-                  "10 Interaction Design Books to Read",
-                  style: TextStyle(fontWeight: FontWeight.w600),
+        return Wrap(
+          children: [
+            const ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+              title: Text(
+                COULD_NOT_CREATE_THIS_SHELF,
+                style: TextStyle(
+                  fontWeight: FontWeight.w500,
+                  fontSize: TEXT_CARD_REGULAR_2X,
                 ),
               ),
-              Divider(
-                color: Colors.black54,
-                height: 0.0,
+            ),
+            Container(
+              width: double.infinity,
+              height: 1.0,
+              color: Colors.black12,
+            ),
+            const ListTile(
+              contentPadding: EdgeInsets.symmetric(horizontal: MARGIN_LARGE),
+              title: Text(
+                ENTER_A_SHELF_NAME,
+                style: TextStyle(fontSize: TEXT_REGULAR, color: Colors.black54),
               ),
-              ListTile(
-                leading: Icon(Icons.edit_outlined),
-                title: Text(
-                  RENAME_SHELF,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54,
+            ),
+            Container(
+              margin: const EdgeInsets.only(
+                left: MARGIN_LARGE,
+                right: MARGIN_LARGE,
+                bottom: MARGIN_LARGE,
+              ),
+              child: SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: const Text(OK),
+                ),
+              ),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Future<dynamic> _showOptionsOnBookShelf(
+    BuildContext buildContext,
+    String shelfName,
+    String shelfId,
+  ) {
+    return showModalBottomSheet(
+      context: buildContext,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (context, setModalState) {
+            return Wrap(
+              children: [
+                ListTile(
+                  title: Text(
+                    shelfName,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
                   ),
                 ),
-              ),
-              ListTile(
-                leading: Icon(Icons.delete),
-                title: Text(
-                  DELETE_SHELF,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w500,
-                    color: Colors.black54,
+                const Divider(
+                  color: Colors.black54,
+                  height: 0.0,
+                ),
+                ListTile(
+                  onTap: () {
+                    ShelfDetailsBloc bloc = Provider.of(
+                      buildContext,
+                      listen: false,
+                    );
+                    bloc.onTapEditShelf();
+                    Navigator.pop(context);
+                  },
+                  leading: const Icon(Icons.edit_outlined),
+                  title: const Text(
+                    RENAME_SHELF,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          );
-        });
+                ListTile(
+                  onTap: () {
+                    ShelfDetailsBloc bloc = Provider.of(
+                      buildContext,
+                      listen: false,
+                    );
+                    bloc.deleteShelfById(shelfId);
+                    Navigator.pop(context, true);
+                  },
+                  leading: const Icon(Icons.delete),
+                  title: const Text(
+                    DELETE_SHELF,
+                    style: TextStyle(
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black54,
+                    ),
+                  ),
+                ),
+              ],
+            );
+          },
+        );
       },
     );
   }
@@ -378,12 +416,14 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailsPage(title: '',),
+        builder: (context) => BookDetailsPage(
+          title: '',
+        ),
       ),
     );
   }
 
-  void _showSortByFilterBottomSheet(BuildContext context) {
+/*void _showSortByFilterBottomSheet(BuildContext context) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -464,11 +504,11 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
                   });
                   setState(() {
                     selectedSortFilter = sortByFilters[1];
-                    /*dummyBooks.sort((first, second) {
+                    */ /*dummyBooks.sort((first, second) {
                       return first.createdAt
                               ?.compareTo(second.createdAt ?? 0) ??
                           0;
-                    });*/
+                    });*/ /*
                   });
                   Navigator.pop(context);
                 },
@@ -482,11 +522,11 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
                     });
                     setState(() {
                       selectedSortFilter = sortByFilters[1];
-                      /*dummyBooks.sort((first, second) {
+                      */ /*dummyBooks.sort((first, second) {
                         return first.createdAt
                                 ?.compareTo(second.createdAt ?? 0) ??
                             0;
-                      });*/
+                      });*/ /*
                     });
                     Navigator.pop(context);
                   },
@@ -502,14 +542,16 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
                     selectedSortFilter = sortByFilters.last;
                     dummyBooks.sort((first, second) {
                       return first.title?.codeUnits
-                          .reduce(
-                            (value, element) => value + element,
-                      )
-                          .compareTo(
-                        second.title?.codeUnits.reduce(
-                              (value, element) => value + element,
-                        ) ?? 0,
-                      ) ?? 0;
+                              .reduce(
+                                (value, element) => value + element,
+                              )
+                              .compareTo(
+                                second.title?.codeUnits.reduce(
+                                      (value, element) => value + element,
+                                    ) ??
+                                    0,
+                              ) ??
+                          0;
                     });
                   });
                   Navigator.pop(context);
@@ -526,14 +568,16 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
                       selectedSortFilter = sortByFilters.last;
                       dummyBooks.sort((first, second) {
                         return first.title?.codeUnits
-                            .reduce(
-                              (value, element) => value + element,
-                        )
-                            .compareTo(
-                          second.title?.codeUnits.reduce(
-                                (value, element) => value + element,
-                          ) ?? 0,
-                        ) ?? 0;
+                                .reduce(
+                                  (value, element) => value + element,
+                                )
+                                .compareTo(
+                                  second.title?.codeUnits.reduce(
+                                        (value, element) => value + element,
+                                      ) ??
+                                      0,
+                                ) ??
+                            0;
                       });
                     });
                     Navigator.pop(context);
@@ -650,6 +694,43 @@ class _ShelfDetailsPageState extends State<ShelfDetailsPage> {
           );
         });
       },
+    );
+  }*/
+}
+
+class ShelfNameAndBookCountSectionView extends StatelessWidget {
+  ShelfVO? shelf;
+
+  ShelfNameAndBookCountSectionView({required this.shelf});
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+          child: Text(
+            shelf?.name ?? "",
+            style: const TextStyle(
+              fontSize: TEXT_HEADING_2X,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+        ),
+        const SizedBox(height: MARGIN_MEDIUM),
+        Container(
+          margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+          child: Text(
+            (shelf != null && shelf!.books.isNotEmpty)
+                ? "${shelf!.books.length} books"
+                : EMPTY,
+            style: const TextStyle(
+              color: Colors.black54,
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

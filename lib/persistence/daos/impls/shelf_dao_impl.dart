@@ -28,8 +28,12 @@ class ShelfDaoImpl extends ShelfDao {
   }
 
   @override
-  void updateShelfById(ShelfVO shelf) async {
-    await getShelfBox().put(shelf.id, shelf);
+  void updateShelfNameById(String shelfId, String shelfName) async {
+    var shelf = getShelfById(shelfId);
+    if (shelf != null) {
+      shelf.name = shelfName;
+      await getShelfBox().put(shelf.id, shelf);
+    }
   }
 
   /// Reactive Programming
@@ -45,6 +49,16 @@ class ShelfDaoImpl extends ShelfDao {
 
   Box<ShelfVO> getShelfBox() {
     return Hive.box<ShelfVO>(BOX_NAME_SHELF_VO);
+  }
+
+  @override
+  Stream<ShelfVO?> getShelfStreamById(String shelfId) {
+    return Stream.value(getShelfById(shelfId));
+  }
+
+  @override
+  void deleteShelfById(String shelfId) async{
+    await getShelfBox().delete(shelfId);
   }
 
 }

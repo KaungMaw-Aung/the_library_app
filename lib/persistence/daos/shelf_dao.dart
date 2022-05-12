@@ -8,10 +8,14 @@ abstract class ShelfDao {
 
   ShelfVO? getShelfById(String shelfId);
 
-  void updateShelfById(ShelfVO shelf);
+  void updateShelfNameById(String shelfId, String shelfName);
 
   Stream<void> getAllEventsFromShelfBox();
 
   Stream<List<ShelfVO>> getAllShelvesStream();
+
+  Stream<ShelfVO?> getShelfStreamById(String shelfId);
+
+  void deleteShelfById(String shelfId);
 
 }

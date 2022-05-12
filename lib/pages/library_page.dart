@@ -126,11 +126,17 @@ class LibraryPage extends StatelessWidget {
                           ),
                           Visibility(
                             visible: selectedTabIndex == 1,
-                            child: Selector<LibraryBloc, List<ShelfVO>?> (
+                            child: Selector<LibraryBloc, List<ShelfVO>?>(
                               selector: (context, bloc) => bloc.shelves,
+                              shouldRebuild: (oldValue, newValue) => oldValue != newValue,
                               builder: (context, shelves, child) {
                                 return YourShelvesSectionView(
-                                  onShelfTap: () => _navigateToShelfDetailsPage(context),
+                                  onShelfTap: (shelfId) {
+                                    _navigateToShelfDetailsPage(
+                                      context,
+                                      shelfId,
+                                    );
+                                  },
                                   shelves: shelves ?? [],
                                 );
                               },
@@ -292,11 +298,11 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  void _navigateToShelfDetailsPage(BuildContext context) {
+  void _navigateToShelfDetailsPage(BuildContext context, String shelfId) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (BuildContext context) => ShelfDetailsPage(),
+        builder: (BuildContext context) => ShelfDetailsPage(shelfId: shelfId),
       ),
     );
   }
@@ -519,7 +525,7 @@ class CreateNewShelfButtonView extends StatelessWidget {
 }
 
 class YourShelvesSectionView extends StatelessWidget {
-  final Function onShelfTap;
+  final Function(String) onShelfTap;
   final List<ShelfVO> shelves;
 
   YourShelvesSectionView({
@@ -540,7 +546,8 @@ class YourShelvesSectionView extends StatelessWidget {
                     onShelfTap: onShelfTap,
                     shelf: shelf,
                   ),
-                ).toList(),
+                )
+                .toList(),
           )
         : Container();
   }
