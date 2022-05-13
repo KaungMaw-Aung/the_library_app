@@ -47,6 +47,9 @@ class SearchPage extends StatelessWidget {
                           );
                         }
                       },
+                      onTapBack: () {
+                        Navigator.pop(context);
+                      },
                     );
                   },
                 ),

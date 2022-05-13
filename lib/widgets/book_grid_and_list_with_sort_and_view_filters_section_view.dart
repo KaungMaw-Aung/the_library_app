@@ -42,6 +42,7 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
         ),
         selectedViewFilter == viewByFilters.last
             ? ListView.builder(
+                key: const Key('view by list'),
                 itemCount: books?.length ?? 0,
                 padding: const EdgeInsets.only(top: MARGIN_MEDIUM_2),
                 physics: const NeverScrollableScrollPhysics(),
@@ -55,6 +56,7 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
                 },
               )
             : GridView.builder(
+                key: const Key('view by grid'),
                 padding: const EdgeInsets.all(MARGIN_MEDIUM_2),
                 itemCount: books?.length ?? 0,
                 physics: const NeverScrollableScrollPhysics(),
@@ -68,6 +70,7 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
                 ),
                 itemBuilder: (context, index) {
                   return BookGridItemView(
+                    key: Key(books?[index].title ?? ""),
                     book: books?[index],
                     gridCount:
                         selectedViewFilter == viewByFilters.first ? 3 : 2,

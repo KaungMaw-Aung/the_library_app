@@ -8,10 +8,12 @@ class SearchBarView extends StatefulWidget {
   final bool autoFocus;
   final bool enabled;
   final String preLoadText;
+  final Function onTapBack;
 
   SearchBarView({
     required this.onSearchTextChanged,
     required this.onSubmit,
+    required this.onTapBack,
     this.autoFocus = true,
     this.enabled = true,
     this.preLoadText = "",
@@ -37,7 +39,10 @@ class _SearchBarViewState extends State<SearchBarView> {
         Row(
           children: [
             const SizedBox(width: MARGIN_MEDIUM_2),
-            const Icon(Icons.arrow_back),
+            GestureDetector(
+              onTap: () => widget.onTapBack(),
+              child: const Icon(Icons.arrow_back),
+            ),
             Expanded(
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),

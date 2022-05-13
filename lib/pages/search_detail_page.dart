@@ -31,6 +31,9 @@ class SearchDetailPage extends StatelessWidget {
                   autoFocus: false,
                   enabled: false,
                   preLoadText: searchedText,
+                  onTapBack: () {
+                    Navigator.pop(context);
+                  },
                 ),
                 const Divider(
                   color: Colors.black54,

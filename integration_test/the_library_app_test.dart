@@ -8,6 +8,7 @@ import 'package:the_library_app/main.dart';
 import 'package:the_library_app/persistence/persistence_constants.dart';
 
 import 'add_book_to_library_flow_test.dart';
+import 'operatons_in_library_test.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -33,6 +34,8 @@ void main() async {
       await tester.pumpAndSettle(delayFiveSec);
 
       await testAddBookToLibrary(tester);
+
+      await testOperationsInLibrary(tester);
 
     },
   );

@@ -32,6 +32,7 @@ class BookFilterChipsView extends StatelessWidget {
                   .toList()
                   .contains(true),
               child: InkWell(
+                key: const Key("clear filter"),
                 onTap: () => onTapClearButton(),
                 borderRadius: BorderRadius.circular(
                   CHIP_SELECTION_CLEAR_BUTTON_SIZE / 2,

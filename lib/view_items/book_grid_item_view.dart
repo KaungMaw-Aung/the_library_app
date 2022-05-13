@@ -9,11 +9,12 @@ class BookGridItemView extends StatelessWidget {
   final Function(BookVO?) onOverflowTap;
 
   BookGridItemView({
+    Key? key,
     required this.book,
     required this.gridCount,
     required this.onBookTap,
     required this.onOverflowTap,
-  });
+  }): super(key: key);
 
   @override
   Widget build(BuildContext context) {

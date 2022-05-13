@@ -6,7 +6,7 @@ import 'package:the_library_app/pages/home_page.dart';
 import 'test_data/test_data.dart';
 
 Future<void> testAddBookToLibrary(WidgetTester tester) async {
-  var delayFiveSec = const Duration(seconds: 5);
+  var delayFiveSec = const Duration(seconds: 3);
 
   /// check if Home Page appeared
   expect(find.byType(HomePage), findsOneWidget);
@@ -100,7 +100,7 @@ Future<void> testAddBookToLibrary(WidgetTester tester) async {
   await tester.tap(find.text(LIBRARY_TEXT));
   await tester.pumpAndSettle(delayFiveSec);
 
-  /// check if recently visited book is there
+  /// check if recently visited books are there
   expect(find.text(TEST_BOOK_ONE), findsOneWidget);
   expect(find.text(TEST_BOOK_TWO), findsOneWidget);
   expect(find.text(TEST_BOOK_THREE), findsOneWidget);
