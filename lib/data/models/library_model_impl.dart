@@ -142,4 +142,9 @@ class LibraryModelImpl extends LibraryModel {
   void deleteShelfById(String shelfId) {
     _shelfDao.deleteShelfById(shelfId);
   }
+
+  @override
+  void addBookToShelf(String shelfId, BookVO book) {
+    _shelfDao.addBookToShelf(shelfId, book);
+  }
 }

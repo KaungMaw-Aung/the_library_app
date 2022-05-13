@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/persistence/daos/shelf_dao.dart';
 
@@ -59,6 +60,15 @@ class ShelfDaoImpl extends ShelfDao {
   @override
   void deleteShelfById(String shelfId) async{
     await getShelfBox().delete(shelfId);
+  }
+
+  @override
+  void addBookToShelf(String shelfId, BookVO book) async {
+    var shelf = getShelfBox().get(shelfId);
+    if (shelf != null && !shelf.books.contains(book)){
+      shelf.books.add(book);
+      await getShelfBox().put(shelfId, shelf);
+    }
   }
 
 }

@@ -70,7 +70,7 @@ class MoreBooksPage extends StatelessWidget {
                                   context,
                                   title,
                                 ),
-                                onOverflowTap: () =>
+                                onOverflowTap: (book) =>
                                     _showMoreOptionsOnBook(context),
                               );
                             },

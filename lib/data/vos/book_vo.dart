@@ -53,6 +53,30 @@ class BookVO {
 
   Map<String, dynamic> toJson() => _$BookVOToJson(this);
 
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BookVO &&
+          runtimeType == other.runtimeType &&
+          cover == other.cover &&
+          title == other.title &&
+          author == other.author &&
+          description == other.description &&
+          price == other.price &&
+          publisher == other.publisher &&
+          category == other.category;
+
+  @override
+  int get hashCode =>
+      cover.hashCode ^
+      title.hashCode ^
+      author.hashCode ^
+      description.hashCode ^
+      price.hashCode ^
+      publisher.hashCode ^
+      category.hashCode;
+
   @override
   String toString() {
     return 'BookVO{title: $title, category: $category}';

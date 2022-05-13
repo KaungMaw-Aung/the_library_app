@@ -6,7 +6,7 @@ class BookGridItemView extends StatelessWidget {
   final BookVO? book;
   final int gridCount;
   final Function(String) onBookTap;
-  final Function onOverflowTap;
+  final Function(BookVO?) onOverflowTap;
 
   BookGridItemView({
     required this.book,
@@ -78,7 +78,7 @@ class BookGridItemView extends StatelessWidget {
                           color: Colors.transparent,
                           elevation: MARGIN_MEDIUM_2,
                           child: GestureDetector(
-                            onTap: () => onOverflowTap(),
+                            onTap: () => onOverflowTap(book),
                             child: const Icon(
                               Icons.more_horiz,
                               color: Colors.white,

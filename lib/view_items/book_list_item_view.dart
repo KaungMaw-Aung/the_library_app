@@ -5,7 +5,7 @@ import 'package:the_library_app/resources/dimens.dart';
 class BookListItemView extends StatelessWidget {
   final BookVO? book;
   final Function(String) onBookTap;
-  final Function onTapOverflow;
+  final Function(BookVO?) onTapOverflow;
 
   BookListItemView({
     required this.book,
@@ -78,7 +78,7 @@ class BookListItemView extends StatelessWidget {
             ),
             const Spacer(),
             GestureDetector(
-              onTap: () => onTapOverflow(),
+              onTap: () => onTapOverflow(book),
               child: const Icon(
                 Icons.more_horiz,
                 color: Colors.black87,

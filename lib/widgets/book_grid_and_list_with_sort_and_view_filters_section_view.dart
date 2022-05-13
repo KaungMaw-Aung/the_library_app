@@ -28,7 +28,7 @@ class BookGridAndListWithSortAndViewFiltersSectionView extends StatelessWidget {
   final Function onViewByFilterTap;
   final Function(String) onGridBookTap;
   final Function(String) onListBookTap;
-  final Function onTapOverflow;
+  final Function(BookVO?) onTapOverflow;
 
   @override
   Widget build(BuildContext context) {

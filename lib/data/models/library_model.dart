@@ -28,4 +28,6 @@ abstract class LibraryModel {
 
   void deleteShelfById(String shelfId);
 
+  void addBookToShelf(String shelfId, BookVO book);
+
 }

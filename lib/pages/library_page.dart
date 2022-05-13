@@ -6,6 +6,7 @@ import 'package:the_library_app/blocs/library_bloc.dart';
 import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
+import 'package:the_library_app/pages/add_to_shelf_page.dart';
 import 'package:the_library_app/pages/create_new_shelf_page.dart';
 import 'package:the_library_app/pages/shelf_details_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
@@ -109,8 +110,9 @@ class LibraryPage extends StatelessWidget {
                                         onListBookTap: (title) =>
                                             _navigateToBookDetails(
                                                 context, title),
-                                        onTapOverflow: () =>
-                                            _showMoreOptionsOnBook(context),
+                                        onTapOverflow: (book) {
+                                          _showMoreOptionsOnBook(context, book);
+                                        },
                                         onViewByFilterTap: () {
                                           _showViewByFilterBottomSheet(context);
                                         },
@@ -128,7 +130,8 @@ class LibraryPage extends StatelessWidget {
                             visible: selectedTabIndex == 1,
                             child: Selector<LibraryBloc, List<ShelfVO>?>(
                               selector: (context, bloc) => bloc.shelves,
-                              shouldRebuild: (oldValue, newValue) => oldValue != newValue,
+                              shouldRebuild: (oldValue, newValue) =>
+                                  oldValue != newValue,
                               builder: (context, shelves, child) {
                                 return YourShelvesSectionView(
                                   onShelfTap: (shelfId) {
@@ -164,7 +167,7 @@ class LibraryPage extends StatelessWidget {
     );
   }
 
-  void _showMoreOptionsOnBook(BuildContext context) {
+  void _showMoreOptionsOnBook(BuildContext context, BookVO? book) {
     showModalBottomSheet(
       context: context,
       builder: (context) {
@@ -185,9 +188,10 @@ class LibraryPage extends StatelessWidget {
                         height: BOOK_LIST_ITEM_HEIGHT,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(MARGIN_SMALL),
-                          image: const DecorationImage(
+                          image: DecorationImage(
                             image: NetworkImage(
-                              "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
+                              book?.cover ??
+                                  "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -197,17 +201,17 @@ class LibraryPage extends StatelessWidget {
                     const SizedBox(width: MARGIN_MEDIUM_2),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          "Book Name",
-                          style: TextStyle(
+                          book?.title ?? "",
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: MARGIN_SMALL),
+                        const SizedBox(height: MARGIN_SMALL),
                         Text(
-                          "Author Name",
-                          style: TextStyle(
+                          book?.author ?? "",
+                          style: const TextStyle(
                             color: Colors.black54,
                           ),
                         ),
@@ -240,9 +244,18 @@ class LibraryPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const ListTile(
-                leading: Icon(Icons.add),
-                title: Text(
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddToShelfPage(book),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.add),
+                title: const Text(
                   ADD_TO_SHELF,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
@@ -566,7 +579,7 @@ class YourBooksSectionView extends StatelessWidget {
   final Function onViewByFilterTap;
   final Function(String) onGridBookTap;
   final Function(String) onListBookTap;
-  final Function onTapOverflow;
+  final Function(BookVO?) onTapOverflow;
 
   YourBooksSectionView({
     required this.chipsData,
