@@ -9,6 +9,7 @@ import 'package:the_library_app/persistence/persistence_constants.dart';
 
 import 'add_book_to_library_flow_test.dart';
 import 'operatons_in_library_test.dart';
+import 'search_books_test.dart';
 
 void main() async {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
@@ -37,6 +38,7 @@ void main() async {
 
       await testOperationsInLibrary(tester);
 
+      await testSearchingBooks(tester);
     },
   );
 }

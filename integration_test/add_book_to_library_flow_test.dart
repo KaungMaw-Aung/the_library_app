@@ -73,8 +73,7 @@ Future<void> testAddBookToLibrary(WidgetTester tester) async {
   );
   await tester.pumpAndSettle(delayFiveSec);
 
-  /// check if Home Page appeared, carousel is visible and three recently visited book are there
-  expect(find.byType(HomePage), findsOneWidget);
+  /// check if carousel is visible and three recently visited book are there
   expect(find.byType(HorizontalBookCarouselView), findsOneWidget);
   expect(find.byKey(const Key(TEST_BOOK_THREE)), findsOneWidget);
 

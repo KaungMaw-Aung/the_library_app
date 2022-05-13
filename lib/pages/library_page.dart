@@ -8,6 +8,7 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/pages/add_to_shelf_page.dart';
 import 'package:the_library_app/pages/create_new_shelf_page.dart';
+import 'package:the_library_app/pages/search_page.dart';
 import 'package:the_library_app/pages/shelf_details_page.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
@@ -34,8 +35,11 @@ class LibraryPage extends StatelessWidget {
       child: SafeArea(
         child: Scaffold(
           appBar: PreferredSize(
-            child: SearchPlayBooksAppBarView(
-              onSearchBoxTap: () {},
+            child: Hero(
+              tag: 'search',
+              child: SearchPlayBooksAppBarView(
+                onSearchBoxTap: () => _navigateToSearchPage(context),
+              ),
             ),
             preferredSize: const Size.fromHeight(SEARCH_APP_BAR_HEIGHT),
           ),
@@ -290,6 +294,15 @@ class LibraryPage extends StatelessWidget {
           );
         });
       },
+    );
+  }
+
+  void _navigateToSearchPage(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SearchPage(),
+      ),
     );
   }
 

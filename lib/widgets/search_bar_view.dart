@@ -40,6 +40,7 @@ class _SearchBarViewState extends State<SearchBarView> {
           children: [
             const SizedBox(width: MARGIN_MEDIUM_2),
             GestureDetector(
+              key: const Key("back"),
               onTap: () => widget.onTapBack(),
               child: const Icon(Icons.arrow_back),
             ),
