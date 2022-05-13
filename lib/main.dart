@@ -4,7 +4,6 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 
 import 'package:the_library_app/pages/host_page.dart';
 import 'package:the_library_app/persistence/persistence_constants.dart';
-import 'package:collection/collection.dart';
 
 import 'data/vos/shelf_vo.dart';
 

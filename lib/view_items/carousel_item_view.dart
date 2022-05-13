@@ -8,10 +8,11 @@ class CarouselItemView extends StatelessWidget {
   final Function(BookVO?) onOverflowTap;
 
   CarouselItemView({
+    Key? key,
     required this.onTapCarouselItem,
     required this.onOverflowTap,
     required this.visitedBook,
-  });
+  }): super(key: key);
 
   @override
   Widget build(BuildContext context) {

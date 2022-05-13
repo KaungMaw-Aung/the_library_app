@@ -518,6 +518,7 @@ class HorizontalBookCarouselView extends StatelessWidget {
         ),
         items: visitedBooks.map((visitedBook) {
           return CarouselItemView(
+            key: Key(visitedBook.title ?? ""),
             onTapCarouselItem: onTapCarouselItem,
             onOverflowTap: onOverflowTap,
             visitedBook: visitedBook,
