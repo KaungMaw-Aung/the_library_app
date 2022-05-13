@@ -15,6 +15,7 @@ import 'package:the_library_app/widgets/horizontal_audiobook_section_view.dart';
 import 'package:the_library_app/widgets/horizontal_book_section_view.dart';
 import 'package:the_library_app/widgets/search_play_books_app_bar_view.dart';
 
+import 'add_to_shelf_page.dart';
 import 'book_details_page.dart';
 
 class HomePage extends StatelessWidget {
@@ -48,7 +49,8 @@ class HomePage extends StatelessWidget {
                       child: HorizontalBookCarouselView(
                         onTapCarouselItem: (bookTitle) =>
                             _navigateToBookDetails(context, bookTitle),
-                        onOverflowTap: () => _showMoreOptionsOnBook(context),
+                        onOverflowTap: (book) =>
+                            _showMoreOptionsOnCarouselBook(context, book),
                         visitedBooks:
                             (visitedBooks != null && visitedBooks.isNotEmpty)
                                 ? visitedBooks
@@ -262,6 +264,132 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  void _showMoreOptionsOnCarouselBook(BuildContext context, BookVO? book) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(builder: (context, setModalState) {
+          return Wrap(
+            children: [
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: MARGIN_MEDIUM_2),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Card(
+                      elevation: MARGIN_SMALL,
+                      margin: EdgeInsets.zero,
+                      child: Container(
+                        width: BOOK_LIST_ITEM_COVER_WIDTH,
+                        height: BOOK_LIST_ITEM_HEIGHT,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(MARGIN_SMALL),
+                          image: DecorationImage(
+                            image: NetworkImage(
+                              book?.cover ??
+                                  "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
+                            ),
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: MARGIN_MEDIUM_2),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          book?.title ?? "",
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                        const SizedBox(height: MARGIN_SMALL),
+                        Text(
+                          book?.author ?? "",
+                          style: const TextStyle(
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
+                    )
+                  ],
+                ),
+              ),
+              const Divider(
+                color: Colors.black54,
+                height: 0.0,
+              ),
+              const ListTile(
+                leading: Icon(Icons.remove_circle_outline_rounded),
+                title: Text(
+                  REMOVE_DOWNLOAD,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.delete),
+                title: Text(
+                  DELETE_FROM_LIBRARY,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              ListTile(
+                onTap: () {
+                  Navigator.pop(context);
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => AddToShelfPage(book),
+                    ),
+                  );
+                },
+                leading: const Icon(Icons.add),
+                title: const Text(
+                  ADD_TO_SHELF,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              const ListTile(
+                leading: Icon(Icons.book_rounded),
+                title: Text(
+                  ABOUT_THIS_EBOOK,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black54,
+                  ),
+                ),
+              ),
+              Container(
+                margin: const EdgeInsets.only(
+                  top: MARGIN_SMALL,
+                  left: MARGIN_MEDIUM_2,
+                  right: MARGIN_MEDIUM_2,
+                  bottom: MARGIN_MEDIUM_2,
+                ),
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {},
+                  child: const Text("Buy \$4.99"),
+                ),
+              ),
+            ],
+          );
+        });
+      },
+    );
+  }
+
   void _navigateToBookDetails(BuildContext context, String title) {
     Navigator.push(
       context,
@@ -365,7 +493,7 @@ class EbooksSectionView extends StatelessWidget {
 class HorizontalBookCarouselView extends StatelessWidget {
   final List<BookVO> visitedBooks;
   final Function(String) onTapCarouselItem;
-  final Function onOverflowTap;
+  final Function(BookVO?) onOverflowTap;
 
   HorizontalBookCarouselView({
     required this.onTapCarouselItem,

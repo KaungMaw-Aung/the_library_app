@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/shelf_details_bloc.dart';
-import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
+import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/resources/strings.dart';
+import 'package:the_library_app/widgets/book_filter_chips_view.dart';
+import 'package:the_library_app/widgets/book_grid_and_list_with_sort_and_view_filters_section_view.dart';
 
 import 'book_details_page.dart';
 
@@ -13,18 +15,9 @@ class ShelfDetailsPage extends StatelessWidget {
 
   ShelfDetailsPage({required this.shelfId});
 
-  List<BookFilterChipVO> chipsData = [
-    BookFilterChipVO("Not started", false),
-    BookFilterChipVO("In progress", false),
-  ];
-  final List<String> sortByFilters = ["Author", "Recent", "Title"];
-  final List<String> viewByFilters = ["Grid 3x", "Grid 2x", "List"];
-
   /// State Variables
   int? groupValue = 1;
   int? viewFilterGroupValue = 0;
-  String selectedSortFilter = "Recent";
-  String selectedViewFilter = "Grid 3x";
 
   final TextEditingController _controller = TextEditingController();
 
@@ -115,12 +108,11 @@ class ShelfDetailsPage extends StatelessWidget {
                             );
                           }),
                         )
-                      : Selector<ShelfDetailsBloc, ShelfVO?>(
-                          selector: (context, bloc) => bloc.shelf,
-                          builder: (context, shelf, child) {
-                            _controller.text = shelf?.name ?? "";
+                      : Consumer<ShelfDetailsBloc>(
+                          builder: (context, bloc, child) {
+                            _controller.text = bloc.shelf?.name ?? "";
                             return ShelfNameAndBookCountSectionView(
-                              shelf: shelf,
+                              shelf: bloc.shelf,
                             );
                           },
                         );
@@ -130,41 +122,63 @@ class ShelfDetailsPage extends StatelessWidget {
                 color: Colors.black54,
                 height: MARGIN_XLARGE,
               ),
-              /*BookFilterChipsView(
-                chipsData: chipsData,
-                onTapChip: (label, isSelected) {
-                  setState(() {
-                    chipsData = chipsData.map((originalChipData) {
-                      if (originalChipData.label == label) {
-                        originalChipData.isSelected = isSelected;
-                      }
-                      return originalChipData;
-                    }).toList();
-                  });
-                },
-                onTapClearButton: () {
-                  setState(
-                    () {
-                      chipsData = chipsData.map((chipData) {
-                        chipData.isSelected = false;
-                        return chipData;
-                      }).toList();
+              Consumer<ShelfDetailsBloc>(
+                builder: (context, bloc, child) {
+                  return BookFilterChipsView(
+                    chipsData: bloc.chipsData ?? [],
+                    onTapChip: (label, isSelected) {
+                      bloc.onTapChip(label, isSelected);
+                    },
+                    onTapClearButton: () {
+                      bloc.onTapClearButton();
                     },
                   );
                 },
               ),
-              BookGridAndListWithSortAndViewFiltersSectionView(
-                selectedSortFilter: selectedSortFilter,
-                selectedViewFilter: selectedViewFilter,
-                viewByFilters: viewByFilters,
-                sortByFilters: sortByFilters,
-                books: dummyBooks,
-                onSortByFilterTap: () => _showSortByFilterBottomSheet(context),
-                onViewByFilterTap: () => _showViewByFilterBottomSheet(context),
-                onGridBookTap: (title) => _navigateToBookDetails(context),
-                onListBookTap: (title) => _navigateToBookDetails(context),
-                onTapOverflow: () => _showMoreOptionsOnBook(context),
-              ),*/
+              Consumer<ShelfDetailsBloc>(
+                builder: (context, bloc, child) {
+                  return bloc.books != null && bloc.books!.isNotEmpty
+                      ? BookGridAndListWithSortAndViewFiltersSectionView(
+                          selectedSortFilter: bloc.selectedSortFilter,
+                          selectedViewFilter: bloc.selectedViewFilter,
+                          viewByFilters: bloc.viewByFilters,
+                          sortByFilters: bloc.sortByFilters,
+                          books: bloc.books,
+                          onSortByFilterTap: () =>
+                              _showSortByFilterBottomSheet(context),
+                          onViewByFilterTap: () =>
+                              _showViewByFilterBottomSheet(context),
+                          onGridBookTap: (title) {
+                            bloc.shelf?.books
+                                .firstWhere((element) => element.title == title)
+                                .visitedAt = DateTime.now();
+                            if (bloc.shelf != null) {
+                              bloc.updateShelf(bloc.shelf!);
+                            }
+                            _navigateToBookDetails(context, title);
+                          },
+                          onListBookTap: (title) {
+                            bloc.shelf?.books
+                                .firstWhere((element) => element.title == title)
+                                .visitedAt = DateTime.now();
+                            if (bloc.shelf != null) {
+                              bloc.updateShelf(bloc.shelf!);
+                            }
+                            _navigateToBookDetails(context, title);
+                          },
+                          onTapOverflow: (book) =>
+                              _showMoreOptionsOnBook(context, book),
+                        )
+                      : Center(
+                          child: Container(
+                            margin: EdgeInsets.only(
+                              top: MediaQuery.of(context).size.height * 0.3,
+                            ),
+                            child: const Text(YOUR_SHELF_IS_EMPTY),
+                          ),
+                        );
+                },
+              ),
             ],
           ),
         ),
@@ -296,9 +310,9 @@ class ShelfDetailsPage extends StatelessWidget {
     );
   }
 
-  void _showMoreOptionsOnBook(BuildContext context) {
+  void _showMoreOptionsOnBook(BuildContext buildContext, BookVO? book) {
     showModalBottomSheet(
-      context: context,
+      context: buildContext,
       builder: (context) {
         return StatefulBuilder(builder: (context, setModalState) {
           return Wrap(
@@ -317,9 +331,10 @@ class ShelfDetailsPage extends StatelessWidget {
                         height: BOOK_LIST_ITEM_HEIGHT,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(MARGIN_SMALL),
-                          image: const DecorationImage(
+                          image: DecorationImage(
                             image: NetworkImage(
-                              "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
+                              book?.cover ??
+                                  "https://d1csarkz8obe9u.cloudfront.net/posterpreviews/action-thriller-book-cover-design-template-3675ae3e3ac7ee095fc793ab61b812cc_screen.jpg?ts=1637008457",
                             ),
                             fit: BoxFit.cover,
                           ),
@@ -329,17 +344,17 @@ class ShelfDetailsPage extends StatelessWidget {
                     const SizedBox(width: MARGIN_MEDIUM_2),
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      children: const [
+                      children: [
                         Text(
-                          "Book Name",
-                          style: TextStyle(
+                          book?.title ?? "",
+                          style: const TextStyle(
                             fontWeight: FontWeight.w600,
                           ),
                         ),
-                        SizedBox(height: MARGIN_SMALL),
+                        const SizedBox(height: MARGIN_SMALL),
                         Text(
-                          "Author Name",
-                          style: TextStyle(
+                          book?.author ?? "",
+                          style: const TextStyle(
                             color: Colors.black54,
                           ),
                         ),
@@ -372,10 +387,16 @@ class ShelfDetailsPage extends StatelessWidget {
                   ),
                 ),
               ),
-              const ListTile(
-                leading: Icon(Icons.add),
-                title: Text(
-                  ADD_TO_SHELF,
+              ListTile(
+                onTap: () {
+                  ShelfDetailsBloc bloc =
+                      Provider.of(buildContext, listen: false);
+                  bloc.removeBookFromShelf(book);
+                  Navigator.pop(context);
+                },
+                leading: const Icon(Icons.add),
+                title: const Text(
+                  REMOVE_FROM_SHELF,
                   style: TextStyle(
                     fontWeight: FontWeight.w500,
                     color: Colors.black54,
@@ -412,21 +433,20 @@ class ShelfDetailsPage extends StatelessWidget {
     );
   }
 
-  void _navigateToBookDetails(BuildContext context) {
+  void _navigateToBookDetails(BuildContext context, String bookTitle) {
     Navigator.push(
       context,
       MaterialPageRoute(
-        builder: (context) => BookDetailsPage(
-          title: '',
-        ),
+        builder: (context) => BookDetailsPage(title: bookTitle),
       ),
     );
   }
 
-/*void _showSortByFilterBottomSheet(BuildContext context) {
+  void _showSortByFilterBottomSheet(BuildContext buildContext) {
     showModalBottomSheet(
-      context: context,
+      context: buildContext,
       builder: (context) {
+        ShelfDetailsBloc bloc = Provider.of(buildContext, listen: false);
         return StatefulBuilder(builder: (context, setModalState) {
           return Wrap(
             children: [
@@ -445,27 +465,12 @@ class ShelfDetailsPage extends StatelessWidget {
                 height: MARGIN_MEDIUM,
               ),
               ListTile(
-                title: Text(sortByFilters.first),
+                title: Text(bloc.sortByFilters.first),
                 onTap: () {
                   setModalState(() {
                     groupValue = 0;
                   });
-                  setState(() {
-                    selectedSortFilter = sortByFilters.first;
-                    dummyBooks.sort((first, second) {
-                      return first.author?.codeUnits
-                              .reduce(
-                                (value, element) => value + element,
-                              )
-                              .compareTo(
-                                second.author?.codeUnits.reduce(
-                                      (value, element) => value + element,
-                                    ) ??
-                                    0,
-                              ) ??
-                          0;
-                    });
-                  });
+                  bloc.onTapSortByFilter(bloc.sortByFilters.first);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -476,40 +481,18 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       groupValue = value;
                     });
-                    setState(() {
-                      selectedSortFilter = sortByFilters.first;
-                      dummyBooks.sort((first, second) {
-                        return first.author?.codeUnits
-                                .reduce(
-                                  (value, element) => value + element,
-                                )
-                                .compareTo(
-                                  second.author?.codeUnits.reduce(
-                                        (value, element) => value + element,
-                                      ) ??
-                                      0,
-                                ) ??
-                            0;
-                      });
-                    });
+                    bloc.onTapSortByFilter(bloc.sortByFilters.first);
                     Navigator.pop(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text(sortByFilters[1]),
+                title: Text(bloc.sortByFilters[1]),
                 onTap: () {
                   setModalState(() {
                     groupValue = 1;
                   });
-                  setState(() {
-                    selectedSortFilter = sortByFilters[1];
-                    */ /*dummyBooks.sort((first, second) {
-                      return first.createdAt
-                              ?.compareTo(second.createdAt ?? 0) ??
-                          0;
-                    });*/ /*
-                  });
+                  bloc.onTapSortByFilter(bloc.sortByFilters[1]);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -520,40 +503,18 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       groupValue = value;
                     });
-                    setState(() {
-                      selectedSortFilter = sortByFilters[1];
-                      */ /*dummyBooks.sort((first, second) {
-                        return first.createdAt
-                                ?.compareTo(second.createdAt ?? 0) ??
-                            0;
-                      });*/ /*
-                    });
+                    bloc.onTapSortByFilter(bloc.sortByFilters[1]);
                     Navigator.pop(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text(sortByFilters.last),
+                title: Text(bloc.sortByFilters.last),
                 onTap: () {
                   setModalState(() {
                     groupValue = 2;
                   });
-                  setState(() {
-                    selectedSortFilter = sortByFilters.last;
-                    dummyBooks.sort((first, second) {
-                      return first.title?.codeUnits
-                              .reduce(
-                                (value, element) => value + element,
-                              )
-                              .compareTo(
-                                second.title?.codeUnits.reduce(
-                                      (value, element) => value + element,
-                                    ) ??
-                                    0,
-                              ) ??
-                          0;
-                    });
-                  });
+                  bloc.onTapSortByFilter(bloc.sortByFilters.last);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -564,22 +525,7 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       groupValue = value;
                     });
-                    setState(() {
-                      selectedSortFilter = sortByFilters.last;
-                      dummyBooks.sort((first, second) {
-                        return first.title?.codeUnits
-                                .reduce(
-                                  (value, element) => value + element,
-                                )
-                                .compareTo(
-                                  second.title?.codeUnits.reduce(
-                                        (value, element) => value + element,
-                                      ) ??
-                                      0,
-                                ) ??
-                            0;
-                      });
-                    });
+                    bloc.onTapSortByFilter(bloc.sortByFilters.last);
                     Navigator.pop(context);
                   },
                 ),
@@ -591,10 +537,11 @@ class ShelfDetailsPage extends StatelessWidget {
     );
   }
 
-  void _showViewByFilterBottomSheet(BuildContext context) {
+  void _showViewByFilterBottomSheet(BuildContext buildContext) {
     showModalBottomSheet(
-      context: context,
+      context: buildContext,
       builder: (context) {
+        ShelfDetailsBloc bloc = Provider.of(buildContext, listen: false);
         return StatefulBuilder(builder: (context, setModalState) {
           return Wrap(
             children: [
@@ -613,14 +560,12 @@ class ShelfDetailsPage extends StatelessWidget {
                 height: MARGIN_MEDIUM,
               ),
               ListTile(
-                title: Text(viewByFilters.first),
+                title: Text(bloc.viewByFilters.first),
                 onTap: () {
                   setModalState(() {
                     viewFilterGroupValue = 0;
                   });
-                  setState(() {
-                    selectedViewFilter = viewByFilters.first;
-                  });
+                  bloc.onTapViewByFilter(bloc.viewByFilters.first);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -631,22 +576,18 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       viewFilterGroupValue = value;
                     });
-                    setState(() {
-                      selectedViewFilter = viewByFilters.first;
-                    });
+                    bloc.onTapViewByFilter(bloc.viewByFilters.first);
                     Navigator.pop(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text(viewByFilters[1]),
+                title: Text(bloc.viewByFilters[1]),
                 onTap: () {
                   setModalState(() {
                     viewFilterGroupValue = 1;
                   });
-                  setState(() {
-                    selectedViewFilter = viewByFilters[1];
-                  });
+                  bloc.onTapViewByFilter(bloc.viewByFilters[1]);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -657,22 +598,18 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       viewFilterGroupValue = value;
                     });
-                    setState(() {
-                      selectedViewFilter = viewByFilters[1];
-                    });
+                    bloc.onTapViewByFilter(bloc.viewByFilters[1]);
                     Navigator.pop(context);
                   },
                 ),
               ),
               ListTile(
-                title: Text(viewByFilters.last),
+                title: Text(bloc.viewByFilters.last),
                 onTap: () {
                   setModalState(() {
                     viewFilterGroupValue = 2;
                   });
-                  setState(() {
-                    selectedViewFilter = viewByFilters.last;
-                  });
+                  bloc.onTapViewByFilter(bloc.viewByFilters.last);
                   Navigator.pop(context);
                 },
                 leading: Radio(
@@ -683,9 +620,7 @@ class ShelfDetailsPage extends StatelessWidget {
                     setModalState(() {
                       viewFilterGroupValue = value;
                     });
-                    setState(() {
-                      selectedViewFilter = viewByFilters.last;
-                    });
+                    bloc.onTapViewByFilter(bloc.viewByFilters.last);
                     Navigator.pop(context);
                   },
                 ),
@@ -695,11 +630,11 @@ class ShelfDetailsPage extends StatelessWidget {
         });
       },
     );
-  }*/
+  }
 }
 
 class ShelfNameAndBookCountSectionView extends StatelessWidget {
-  ShelfVO? shelf;
+  final ShelfVO? shelf;
 
   ShelfNameAndBookCountSectionView({required this.shelf});
 

@@ -5,7 +5,7 @@ import 'package:the_library_app/resources/dimens.dart';
 class CarouselItemView extends StatelessWidget {
   final BookVO? visitedBook;
   final Function(String) onTapCarouselItem;
-  final Function onOverflowTap;
+  final Function(BookVO?) onOverflowTap;
 
   CarouselItemView({
     required this.onTapCarouselItem,
@@ -44,7 +44,7 @@ class CarouselItemView extends StatelessWidget {
                   child: Align(
                     alignment: Alignment.topRight,
                     child: GestureDetector(
-                      onTap: () => onOverflowTap(),
+                      onTap: () => onOverflowTap(visitedBook),
                       child: const Icon(
                         Icons.more_horiz,
                         color: Colors.white,

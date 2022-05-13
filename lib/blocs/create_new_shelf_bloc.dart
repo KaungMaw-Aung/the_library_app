@@ -14,6 +14,7 @@ class CreateNewShelfBloc extends ChangeNotifier {
       ShelfVO(
         uuid.v4(),
         shelfName,
+        [],
         DateTime.now(),
       ),
     );
