@@ -6,7 +6,7 @@ import 'package:the_library_app/pages/home_page.dart';
 import 'test_data/test_data.dart';
 
 Future<void> testAddBookToLibrary(WidgetTester tester) async {
-  var delayFiveSec = const Duration(seconds: 3);
+  var delayFiveSec = const Duration(seconds: 5);
 
   /// check if Home Page appeared
   expect(find.byType(HomePage), findsOneWidget);

@@ -21,6 +21,7 @@ class CreateNewShelfPage extends StatelessWidget {
                 margin: const EdgeInsets.only(left: MARGIN_MEDIUM_2),
                 child: Builder(builder: (context) {
                   return GestureDetector(
+                    key: const Key('create'),
                     onTap: () {
                       _createNewShelf(context, _controller.text);
                     },

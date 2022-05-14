@@ -8,6 +8,7 @@ import 'package:the_library_app/main.dart';
 import 'package:the_library_app/persistence/persistence_constants.dart';
 
 import 'add_book_to_library_flow_test.dart';
+import 'operations_in_shelf_test.dart';
 import 'operatons_in_library_test.dart';
 import 'search_books_test.dart';
 
@@ -39,6 +40,8 @@ void main() async {
       await testOperationsInLibrary(tester);
 
       await testSearchingBooks(tester);
+
+      await testOperationsInShelf(tester);
     },
   );
 }

@@ -14,8 +14,8 @@ class AddToShelfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (context) => AddToShelfBloc(),
+    return ChangeNotifierProvider<AddToShelfBloc>.value(
+      value: AddToShelfBloc(),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(

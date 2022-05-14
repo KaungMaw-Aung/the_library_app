@@ -79,6 +79,7 @@ class BookGridItemView extends StatelessWidget {
                           color: Colors.transparent,
                           elevation: MARGIN_MEDIUM_2,
                           child: GestureDetector(
+                            key: Key("${book?.title} overflow"),
                             onTap: () => onOverflowTap(book),
                             child: const Icon(
                               Icons.more_horiz,

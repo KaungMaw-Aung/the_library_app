@@ -23,8 +23,8 @@ class ShelfDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<ShelfDetailsBloc>(
-      create: (context) => ShelfDetailsBloc(shelfId),
+    return ChangeNotifierProvider<ShelfDetailsBloc>.value(
+      value: ShelfDetailsBloc(shelfId),
       child: Scaffold(
         backgroundColor: Colors.white,
         appBar: AppBar(
@@ -35,24 +35,33 @@ class ShelfDetailsPage extends StatelessWidget {
             builder: (context, showShelfEditViews, child) {
               return showShelfEditViews
                   ? GestureDetector(
+                      key: const Key("rename"),
                       onTap: () {
                         _renameShelf(context, shelfId, _controller.text);
                       },
                       child: const Icon(
                         Icons.check,
+                        key: Key("confirm rename"),
                         color: Colors.blue,
                       ),
                     )
-                  : const Icon(
-                      Icons.chevron_left,
-                      color: Colors.black,
-                      size: MARGIN_XLARGE,
+                  : GestureDetector(
+                      key: const Key("back"),
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                      child: const Icon(
+                        Icons.chevron_left,
+                        color: Colors.black,
+                        size: MARGIN_XLARGE,
+                      ),
                     );
             },
           ),
           actions: [
             Builder(builder: (context) {
               return GestureDetector(
+                key: const Key("shelf overflow"),
                 onTap: () {
                   ShelfDetailsBloc bloc = Provider.of(context, listen: false);
                   _showOptionsOnBookShelf(
@@ -60,7 +69,7 @@ class ShelfDetailsPage extends StatelessWidget {
                     bloc.shelf?.name ?? "",
                     shelfId,
                   ).then((value) {
-                    if (value) {
+                    if (value == true) {
                       Navigator.pop(context);
                     }
                   });
@@ -185,6 +194,29 @@ class ShelfDetailsPage extends StatelessWidget {
       ),
     );
   }
+
+  /*void _showAlertDialog(BuildContext context, String shelfName) {
+    AlertDialog(
+      title: Text("Delete $shelfName"),
+      content: const Text(
+        "This shelf will be deleted from all of your devices. Purchases, samples, uploads, and active rentals on this shelf will stay in \"Your books\".",
+      ),
+      actions: [
+        TextButton(
+          onPressed: () {
+            print("dismissed");
+          },
+          child: const Text("Cancel"),
+        ),
+        ElevatedButton(
+          onPressed: () {
+            print("confirm");
+          },
+          child: const Text("Delete"),
+        ),
+      ],
+    ).build(context);
+  }*/
 
   void _renameShelf(BuildContext context, String shelfId, String updatedName) {
     if (updatedName.isNotEmpty) {
