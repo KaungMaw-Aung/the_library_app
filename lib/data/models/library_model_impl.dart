@@ -20,12 +20,25 @@ class LibraryModelImpl extends LibraryModel {
   LibraryModelImpl._internal();
 
   /// Data Agents
-  final LibraryDataAgent _dataAgent = LibraryDataAgentRetrofitImpl();
+  LibraryDataAgent _dataAgent = LibraryDataAgentRetrofitImpl();
 
   /// Daos
-  final BookDao _bookDao = BookDaoImpl();
-  final VisitedBookDao _visitedBookDao = VisitedBookDaoImpl();
-  final ShelfDao _shelfDao = ShelfDaoImpl();
+  BookDao _bookDao = BookDaoImpl();
+  VisitedBookDao _visitedBookDao = VisitedBookDaoImpl();
+  ShelfDao _shelfDao = ShelfDaoImpl();
+
+  /// For Testing Purpose
+  void setUpDaosAndDataAgents(
+    LibraryDataAgent mDataAgent,
+    BookDao mBookDao,
+    VisitedBookDao mVisitedBookDao,
+    ShelfDao mShelfBookDao,
+  ) {
+    _dataAgent = mDataAgent;
+    _bookDao = mBookDao;
+    _visitedBookDao = mVisitedBookDao;
+    _shelfDao = mShelfBookDao;
+  }
 
   @override
   Future<List<BookOverviewListVO>?> getBookOverviewLists() {

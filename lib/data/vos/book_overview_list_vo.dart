@@ -1,5 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
+import 'package:collection/collection.dart';
 
 part 'book_overview_list_vo.g.dart';
 
@@ -24,4 +25,17 @@ class BookOverviewListVO {
       _$BookOverviewListVOFromJson(json);
 
   Map<String, dynamic> toJson() => _$BookOverviewListVOToJson(this);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is BookOverviewListVO &&
+          runtimeType == other.runtimeType &&
+          listName == other.listName &&
+          listNameEncoded == other.listNameEncoded &&
+          const ListEquality().equals(books, other.books);
+
+  @override
+  int get hashCode =>
+      listName.hashCode ^ listNameEncoded.hashCode ^ books.hashCode;
 }

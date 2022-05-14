@@ -55,6 +55,11 @@ class BookVO {
 
 
   @override
+  String toString() {
+    return 'BookVO{cover: $cover, title: $title, author: $author, description: $description, price: $price, publisher: $publisher, category: $category}';
+  }
+
+  @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is BookVO &&
@@ -76,9 +81,4 @@ class BookVO {
       price.hashCode ^
       publisher.hashCode ^
       category.hashCode;
-
-  @override
-  String toString() {
-    return 'BookVO{title: $title, category: $category}';
-  }
 }
