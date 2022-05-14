@@ -12,9 +12,13 @@ class MoreBookBloc extends ChangeNotifier {
   int offset = 0;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  MoreBookBloc(this.listName) {
+  MoreBookBloc(this.listName, [LibraryModel? mLibraryModel]) {
+
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
 
     getMoreOnOverviewList(listName, offset);
 

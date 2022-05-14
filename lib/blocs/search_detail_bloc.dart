@@ -10,9 +10,15 @@ class SearchDetailBloc extends ChangeNotifier {
   List<BookOverviewListVO>? resultOverviewBookLists;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  SearchDetailBloc(String searchedText) {
+  SearchDetailBloc(String searchedText, [LibraryModel? mLibraryModel]) {
+
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
+
     _libraryModel.searchAndGetBooksResult(searchedText).then((result) {
       resultOverviewBookLists = result
           ?.groupListsBy((book) => book.category ?? searchedText)

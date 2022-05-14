@@ -9,7 +9,14 @@ class SearchBloc extends ChangeNotifier {
   List<BookVO>? resultBooks = [];
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
+
+  SearchBloc([LibraryModel? mLibraryModel]) {
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
+  }
 
   void onSearch(String query) {
     _libraryModel.searchAndGetBooksResult(query).then((result) {

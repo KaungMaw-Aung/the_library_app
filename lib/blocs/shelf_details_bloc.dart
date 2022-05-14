@@ -27,9 +27,14 @@ class ShelfDetailsBloc extends ChangeNotifier {
   List<BookFilterChipVO>? chipsData;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  ShelfDetailsBloc(String shelfId) {
+  ShelfDetailsBloc(String shelfId, [LibraryModel? mLibraryModel]) {
+
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
 
     /// Getting Shelf Detail Stream
     _libraryModel.getShelfStreamById(shelfId).listen((value) {

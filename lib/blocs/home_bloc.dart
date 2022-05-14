@@ -6,14 +6,20 @@ import 'package:the_library_app/data/vos/book_vo.dart';
 
 class HomeBloc extends ChangeNotifier {
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
   /// State Variables
   int selectedTabIndex = 0;
   List<BookOverviewListVO>? bookOverviewLists;
   List<BookVO>? carouselBooks;
 
-  HomeBloc() {
+  HomeBloc([LibraryModel? mLibraryModel]) {
+
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
+
     /// Get Book Overview Lists
     _libraryModel.getBookOverviewLists().then((bookOverviewLists) {
       this.bookOverviewLists = bookOverviewLists;

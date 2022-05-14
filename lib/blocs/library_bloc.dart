@@ -27,9 +27,15 @@ class LibraryBloc extends ChangeNotifier {
   List<ShelfVO>? shelves;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  LibraryBloc() {
+  LibraryBloc([LibraryModel? mLibraryModel]) {
+
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
+
     /// Get Visited Books For Library
     _libraryModel.getAllVisitedBooksStream().listen((visitedBooks) {
       if (chipsData == null) {

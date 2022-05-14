@@ -1,3 +1,4 @@
+import 'package:the_library_app/data/vos/book_filter_chip_vo.dart';
 import 'package:the_library_app/data/vos/book_overview_list_vo.dart';
 import 'package:the_library_app/data/vos/book_vo.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
@@ -108,5 +109,14 @@ List<ShelfVO> getMockShelves() {
   return [
     ShelfVO("0", "First Shelf", getMockBooks(), DateTime.now()),
     ShelfVO("1", "Second Shelf", [], DateTime.now()),
+  ];
+}
+
+List<BookFilterChipVO> getMockChips() {
+  return [
+    BookFilterChipVO("Comedy", false),
+    BookFilterChipVO("Education", false),
+    BookFilterChipVO("Sciences", false),
+    BookFilterChipVO("Musical", false),
   ];
 }

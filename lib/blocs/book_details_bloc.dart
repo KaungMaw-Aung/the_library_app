@@ -9,9 +9,14 @@ class BookDetailsBloc extends ChangeNotifier {
   BookVO? book;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  BookDetailsBloc(String title) {
+  BookDetailsBloc(String title, [LibraryModel? mLibraryModel]) {
+
+    /// For Testing Purpose
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
 
     /// Get Book Details by Title from Database
     _libraryModel.getBookByTitle(title).then((book) {

@@ -10,9 +10,13 @@ class AddToShelfBloc extends ChangeNotifier {
   List<ShelfVO>? shelves;
 
   /// Model
-  final LibraryModel _libraryModel = LibraryModelImpl();
+  LibraryModel _libraryModel = LibraryModelImpl();
 
-  AddToShelfBloc() {
+  AddToShelfBloc([LibraryModel? mLibraryModel]) {
+
+    if (mLibraryModel != null) {
+      _libraryModel = mLibraryModel;
+    }
 
     /// Get Shelves
     _libraryModel.getAllShelvesStream().listen((shelves) {
